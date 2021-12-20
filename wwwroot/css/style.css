@@ -4,6 +4,7 @@
     box-sizing: border-box;
 }
 
+/*    parallax     */
 .parallax {
     background-image: url(/img/bill.jpg);
     height: 500px;
@@ -25,14 +26,18 @@
 }
 
 .parallax h1 {
+    font-size: 80px;
     z-index: 3;
 }
+/*    parallax     */
 
 body {
     background: black;
     color: #ffffff;
+    min-height: 100vh;
 }
 
+/*    menu     */
 header{
     margin-top: 10px;
     margin-bottom: 10px;
@@ -44,6 +49,11 @@ header{
     display: inline-block;
     vertical-align: middle;
     margin-right: 25px;
+}
+
+.logo img{
+    width: 50px;
+    height: 50px;
 }
 
 .top_menu li{
@@ -68,5 +78,73 @@ header{
 }
 
 .top_menu a:hover{
-    color: royalblue;
+    color: #f9e044;
+}
+/*    menu     */
+
+
+.inner {
+    margin: 0 auto;
+    max-width: 1170px;
+    position: relative;
+    padding: 0 15px !important;
+   }
+
+.zone .inner {
+    display: flex;
+}
+
+/* .zone {
+    background: #102501;
+} */
+.zone p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.z {
+    display: flex;
+    width: 25%;
+    flex-direction: column;
+    text-align: center;
+    background-size: cover !important;
+}
+
+.z img {
+    width: 163px;
+    height: auto;
+    margin: 20% auto 6%;
+}
+
+.z strong {
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.z p {
+    font-size: 14px;
+    font-weight: 300;
+    padding: 5% 6% 10% 6%;
+    background: url(/img/lin.png) no-repeat center top;
+    margin-top: 15px;
+}
+
+.v {
+    background: url(/img/fz1.png) no-repeat right top;
+}
+
+.p {
+    background: url(/img/fz2.png) no-repeat right top;
+}
+
+.k {
+    background: url(/img/fz3.png) no-repeat right top;
+}
+
+.a {
+    background: url(/img/fz4.png) no-repeat right top;
 }
