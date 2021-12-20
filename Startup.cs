@@ -14,23 +14,29 @@ namespace BilliardClub
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            // подробные сообщения об ошибках
+            app.UseDeveloperExceptionPage();
+            app.UseStatusCodePages();
+
+            // исп. статических файлов
+            app.UseStaticFiles();
 
             app.UseRouting();
 
+            // подключение аутентификации и авторизации
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

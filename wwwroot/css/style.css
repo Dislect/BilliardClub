@@ -1,4 +1,72 @@
 ﻿* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+.parallax {
+    background-image: url(/img/bill.jpg);
+    height: 500px;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 60px;
+    align-items: center;
+    position: relative;
+}
+
+.parallax .mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.6);
+    z-index: 2;
+}
+
+.parallax h1 {
+    z-index: 3;
+}
+
+body {
+    background: black;
+    color: #ffffff;
+}
+
+header{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.logo, .top_menu{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 25px;
+}
+
+.top_menu li{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 25px;
+}
+
+.top_menu a{
+    font-family: arial;
+    font-size: 20px;
+    color:#ffffff;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+.logo h1{
+    font-family: arial;
+    vertical-align: middle;
+    font-size: 30px;
+    color:#ffffff;
+}
+
+.top_menu a:hover{
+    color: royalblue;
 }
