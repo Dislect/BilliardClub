@@ -6,8 +6,6 @@
 
 /*    parallax     */
 .parallax {
-    background-image: url(/img/bill.jpg);
-    height: 500px;
     background-attachment: fixed;
     display: flex;
     justify-content: center;
@@ -15,6 +13,18 @@
     font-size: 60px;
     align-items: center;
     position: relative;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.p1{
+    min-height: 93vh;
+    background-image: url(/img/bill.jpg);
+}
+
+.p2{
+    background-image: url(/img/billiards-wallpapers.jpg);
+    min-height: 100vh;
 }
 
 .parallax .mask {
@@ -26,7 +36,8 @@
 }
 
 .parallax h1 {
-    font-size: 80px;
+    font-family: 'Cormorant', serif;
+    font-size: 100px;
     z-index: 3;
 }
 /*    parallax     */
@@ -35,6 +46,7 @@ body {
     background: black;
     color: #ffffff;
     min-height: 100vh;
+    scroll-behavior: smooth;
 }
 
 /*    menu     */
@@ -63,17 +75,15 @@ header{
 }
 
 .top_menu a{
-    font-family: arial;
-    font-size: 20px;
+    font-family: 'Cormorant', serif;
+    font-size: 25px;
     color:#ffffff;
     vertical-align: middle;
     text-decoration: none;
 }
 
 .logo h1{
-    font-family: arial;
     vertical-align: middle;
-    font-size: 30px;
     color:#ffffff;
 }
 
@@ -85,7 +95,7 @@ header{
 
 .inner {
     margin: 0 auto;
-    max-width: 1170px;
+    max-width: 1700px;
     position: relative;
     padding: 0 15px !important;
    }
@@ -94,9 +104,13 @@ header{
     display: flex;
 }
 
-/* .zone {
-    background: #102501;
-} */
+.zone {
+    display: flex;
+    align-items: center; 
+    /* background: #161616; */
+    min-height: 100vh;
+    
+}
 .zone p {
     display: block;
     margin-block-start: 1em;
@@ -111,12 +125,16 @@ header{
     flex-direction: column;
     text-align: center;
     background-size: cover !important;
+    margin-left: 25px;
+    border-width:1;
+    border-color: rgb(190,190,190);
+    border-style: solid;
 }
 
 .z img {
     width: 163px;
     height: auto;
-    margin: 20% auto 6%;
+    margin: 30% auto 6%;
 }
 
 .z strong {
