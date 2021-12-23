@@ -4,6 +4,14 @@
     box-sizing: border-box;
 }
 
+body {
+    background: linear-gradient(to bottom, #121111, #111111);
+    color: #ffffff;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+}
+
+
 /*    parallax     */
 .parallax {
     background-attachment: fixed;
@@ -42,19 +50,14 @@
 }
 /*    parallax     */
 
-body {
-    background: black;
-    color: #ffffff;
-    min-height: 100vh;
-    scroll-behavior: smooth;
-}
 
 /*    menu     */
-header{
-    margin-top: 10px;
-    margin-bottom: 10px;
+header {
+    padding-top: 10px;
+    padding-bottom: 10px;
     display: flex;
     justify-content: center;
+    background: black;
 }
 
 .logo, .top_menu{
@@ -76,7 +79,7 @@ header{
 
 .top_menu a{
     font-family: 'Cormorant', serif;
-    font-size: 25px;
+    font-size: 23px;
     color:#ffffff;
     vertical-align: middle;
     text-decoration: none;
@@ -93,6 +96,7 @@ header{
 /*    menu     */
 
 
+/*    main     */
 .inner {
     margin: 0 auto;
     max-width: 1700px;
@@ -166,3 +170,40 @@ header{
 .a {
     background: url(/img/fz4.png) no-repeat right top;
 }
+/*    main     */
+
+
+/*    Reservation     */
+.content__reservation {
+    margin-top: 5vh;
+    margin-left: 25vh;
+    margin-right: 25vh;
+}
+
+.plan {
+    position: relative;
+    border-radius: 50px 50px 50px 50px;
+}
+
+
+    .plan img {
+        position: fixed;
+        position: absolute;
+        max-width: 1500px;
+    }
+
+
+
+.rusbcol {
+    background: url(/img/rusb.png) no-repeat;
+    background-size: 100%;
+    transform: rotate(90deg);
+}
+
+.table1 {
+    width: 150px;
+    height: 384px;
+    margin-left: -32px;
+    margin-bottom: 111px;
+}
+/*    Reservation     */

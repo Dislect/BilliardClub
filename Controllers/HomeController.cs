@@ -9,7 +9,12 @@ namespace BilliardClub.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Main()
+        {
+            return View();
+        }
+
+        public ActionResult Reservation()
         {
             return View();
         }
