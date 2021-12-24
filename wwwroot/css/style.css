@@ -181,29 +181,75 @@ header {
 }
 
 .plan {
-    position: relative;
+    position: absolute;
+    background-image: url(/img/3-plan-shema-kluba.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    min-width: 1500px;
+    height: 1500px;
     border-radius: 50px 50px 50px 50px;
 }
 
+.rusb {
+    height: 70px;
+    width: 120px;
+    background-image: url(/img/rusb.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
 
-    .plan img {
-        position: fixed;
-        position: absolute;
-        max-width: 1500px;
+    .rusb:hover {
+        filter: brightness(120%);
     }
 
+.poolb {
+    height: 70px;
+    width: 120px;
+    background-image: url(/img/poolb.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
 
+    .poolb:hover {
+        filter: brightness(120%);
+    }
 
-.rusbcol {
-    background: url(/img/rusb.png) no-repeat;
-    background-size: 100%;
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transform: rotate(90deg);
 }
 
+    .col p {
+        transform: rotate(-90deg);
+    }
+
 .table1 {
-    width: 150px;
-    height: 384px;
-    margin-left: -32px;
-    margin-bottom: 111px;
+    margin-left: 125px;
+    margin-top: 150px;
+}
+
+.table2 {
+    margin-left: 290px;
+    margin-top: 90px;
+}
+
+.table3 {
+    margin-left: 125px;
+    margin-top: -70px;
+}
+
+.table4 {
+    margin-left: 290px;
+    margin-top: -220px;
 }
 /*    Reservation     */
