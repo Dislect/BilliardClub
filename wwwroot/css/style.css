@@ -77,21 +77,47 @@ header {
     margin-right: 25px;
 }
 
-.top_menu a{
-    font-family: 'Cormorant', serif;
-    font-size: 23px;
-    color:#ffffff;
-    vertical-align: middle;
-    text-decoration: none;
+    .top_menu a {
+        position: relative;
+        display: block;
+        text-decoration: none;
+        vertical-align: middle;
+        width: 100%;
+        font-family: 'Cormorant', serif;
+        font-size: 23px;
+        color: #ffffff;
+    }
+
+.active span:before {
+    content: '';
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #f9e044;
+    transform: scaleX(1);
 }
 
-.logo h1{
-    vertical-align: middle;
-    color:#ffffff;
+.top_menu a:before {
+    content: '';
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #f9e044;
+    transition: 0.3s;
+    transform: scaleX(0);
 }
 
-.top_menu a:hover{
-    color: #f9e044;
+.top_menu a:hover:before {
+    transform: scaleX(1);
+}
+
+.logo h1 {
+    vertical-align: middle;
+    color: #ffffff;
 }
 /*    menu     */
 
@@ -111,9 +137,7 @@ header {
 .zone {
     display: flex;
     align-items: center; 
-    /* background: #161616; */
     min-height: 100vh;
-    
 }
 .zone p {
     display: block;
@@ -175,9 +199,7 @@ header {
 
 /*    Reservation     */
 .content__reservation {
-    margin-top: 5vh;
-    margin-left: 25vh;
-    margin-right: 25vh;
+    margin: 5vh 23vh
 }
 
 .plan {
@@ -199,7 +221,7 @@ header {
     cursor: pointer;
 }
 
-    .rusb:hover {
+    .rusb:hover, .poolb:hover {
         filter: brightness(120%);
     }
 
@@ -212,20 +234,18 @@ header {
     cursor: pointer;
 }
 
-    .poolb:hover {
-        filter: brightness(120%);
-    }
+.rusb p, .poolb p {
+    font-size: 25px;
+    font-family: 
+}
 
-.row {
+.row, .col{
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .col {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     transform: rotate(90deg);
 }
 
