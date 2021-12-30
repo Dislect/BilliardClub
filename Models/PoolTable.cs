@@ -1,4 +1,6 @@
-﻿namespace BilliardClub.Models
+﻿using System.Collections.Generic;
+
+namespace BilliardClub.Models
 {
     public class PoolTable
     {
@@ -10,5 +12,7 @@
         public int? idTableRotation { get; set; }
         public TypeTable typeTable { get; set; }
         public TableRotation tableRotation { get; set; }
+        public List<RentalHistory> rentalHistories { get; set; } = new();
+        public List<StatusTable> statusTables { get; set; } = new();
     }
 }
