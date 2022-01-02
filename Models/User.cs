@@ -8,10 +8,10 @@ namespace BilliardClub.Models
     public class User : IdentityUser
     {
         [MaxLength(32)]
-        public string firstNane { get; set; }
+        public string firstName { get; set; }
 
         [MaxLength(32)]
-        public string lastNane { get; set; }
+        public string lastName { get; set; }
 
         public DateTime BirthDate { get; set; }
 

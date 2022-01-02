@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
+using BilliardClub.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -26,6 +28,17 @@ namespace BilliardClub
         {
             services.AddDbContext<Context>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<User, IdentityRole>(options =>
+                    {
+                        options.Password.RequiredLength = 3;   // минимальная длина пароля
+                        options.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
+                        options.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
+                        options.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
+                        options.Password.RequireDigit = false; // требуются ли цифры
+                    }
+                )
+                .AddEntityFrameworkStores<Context>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }

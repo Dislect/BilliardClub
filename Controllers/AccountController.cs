@@ -32,7 +32,7 @@ namespace BilliardClub.Controllers
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email,
-                    firstNane = model.firstNane, lastNane = model.lastNane, BirthDate = model.BirthDate};
+                    firstName = model.firstName, lastName = model.lastName, BirthDate = model.BirthDate, PhoneNumber = model.phoneNumber};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

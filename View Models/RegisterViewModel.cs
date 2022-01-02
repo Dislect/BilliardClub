@@ -14,15 +14,19 @@ namespace BilliardClub.View_Models
 
         [Required]
         [Display(Name = "Имя")]
-        public string firstNane { get; set; }
+        public string firstName { get; set; }
 
         [Required]
         [Display(Name = "Фамилия")]
-        public string lastNane { get; set; }
+        public string lastName { get; set; }
 
         [Required]
         [Display(Name = "Дата рождения")]
         public DateTime BirthDate { get; set; }
+
+        [Required]
+        [Display(Name = "Номер телефона")]
+        public string phoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
