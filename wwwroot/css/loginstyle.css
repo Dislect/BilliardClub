@@ -74,6 +74,7 @@ main {
     line-height: 45px;
     cursor: pointer;
     border: none;
+    padding-left: 0px;
 }
 
 .button:hover {

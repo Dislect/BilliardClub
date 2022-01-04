@@ -1,4 +1,37 @@
-﻿
+﻿<style>
+    #element_to_pop_up {
+        background-color: #fff;
+        border-radius: 10px 10px 10px 10px;
+        box-shadow: 0 0 25px 5px #999;
+        color: #111;
+        display: none;
+        min-width: 450px;
+        padding: 25px;
+    }
+
+    .button {
+        background-color: #2b91af;
+        border-radius: 10px;
+        box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .button.b-close {
+        border-radius: 7px 7px 7px 7px;
+        box-shadow: none;
+        font: bold 131% sans-serif;
+        padding: 0 6px 2px;
+        position: absolute;
+        right: -7px;
+        top: -7px;
+    }
+</style>
+
 <div class="content__reservation">
     <div class="plan">
         <div class="table1 rusb row">
@@ -23,3 +56,25 @@
         </div>
     </div>
 </div>
+
+<div id="element_to_pop_up">
+    <span class="button b-close">
+        <span>X</span>
+    </span>
+    <p id="number_table">
+    </p>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/js/jquery.bpopup.min.js"></script>
+
+<script>
+    $('.rusb').click(function () {
+        var number = $(this).text();
+        $('#element_to_pop_up').bPopup({
+            onOpen: function() {
+                $('#number_table').text('Вы хотите заказать этот столик (№' + number +') ?');
+            }
+        });
+    });
+</script>
