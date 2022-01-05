@@ -1,4 +1,4 @@
-﻿input {
+﻿.input__style {
     height: 45px;
     width: 100%;
     color: #3B5983;
@@ -9,22 +9,22 @@
     padding-left: 25px;
 }
 
-input:focus {
-    outline: none;
-    border: 2px solid #C1D9FD;
-}
+.input__style:focus {
+        outline: none;
+        border: 2px solid #C1D9FD;
+    }
 
-input:valid {
-    border-color: greenyellow;
-}
+.input__style:valid {
+        border-color: greenyellow;
+    }
 
-input:invalid {
-    border-color: orange;
-}
+.input__style:invalid {
+        border-color: orange;
+    }
 
-input:not(:focus):invalid {
-    border-color: #C1D9FD;
-}
+.input__style:not(:focus):invalid {
+        border-color: #C1D9FD;
+    }
 
 main {
     height: 100vh;
@@ -34,7 +34,7 @@ main {
     align-items: center;
 }
 
-.register-form-container {
+.register-form-container, .login-form-container {
     position: relative;
     z-index: 2;
     max-width: 415px;
@@ -49,7 +49,7 @@ main {
 }
 
 .form-title {
-    color: #30507D;
+    color: black;
     font-weight: 500;
     font-size: 20px;
     line-height: 23px;
@@ -71,10 +71,8 @@ main {
     color: #fff;
     text-transform: uppercase;
     text-align: center;
-    line-height: 45px;
     cursor: pointer;
     border: none;
-    padding-left: 0px;
 }
 
 .button:hover {

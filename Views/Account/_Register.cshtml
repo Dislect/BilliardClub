@@ -1,48 +1,48 @@
 ﻿@model BilliardClub.View_Models.RegisterViewModel
-<link rel="stylesheet" href="~/css/loginstyle.css" type="text/css">
 
+<link rel="stylesheet" href="~/css/loginstyle.css" type="text/css">
 <div class="register-form-container">
-    <form method="post" asp-controller="Account" asp-action="Register">
+    <form method="post" asp-controller="Account" asp-action="_Register">
         <h1 class="form-title">
             Регистрация
         </h1>
         <div>
 
             <div class="form-field">
-                <input asp-for="Email" placeholder="Почта" required>
+                <input class="input__style" asp-for="Email" placeholder="Почта" required>
                 <span asp-validation-for="Email"></span>
             </div>
 
             <div class="form-field">
-                <input asp-for="firstName" placeholder="Имя" required pattern="[а-яА-Яa-zA-Z]+"
+                <input class="input__style" asp-for="firstName" placeholder="Имя" required pattern="[а-яА-Яa-zA-Z]+"
                        title="Имя может содержать только буквы.">
                 <span asp-validation-for="firstName"></span>
             </div>
 
             <div class="form-field">
-                <input asp-for="lastName" placeholder="Фамилия" required pattern="[а-яА-Яa-zA-Z]+"
+                <input class="input__style" asp-for="lastName" placeholder="Фамилия" required pattern="[а-яА-Яa-zA-Z]+"
                        title="Фамилия может содержать только буквы.">
                 <span asp-validation-for="lastName"></span>
             </div>
 
             <div class="form-field">
-                <input placeholder="Дата рождения" type="text" onfocus="(this.type='date')" asp-for="BirthDate" required>
+                <input class="input__style" placeholder="Дата рождения" type="text" onfocus="(this.type='date')" asp-for="BirthDate" required>
                 <span asp-validation-for="BirthDate"></span>
             </div>
 
             <div class="form-field">
-                <input asp-for="phoneNumber" placeholder="Телефон" required pattern="7-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}"
+                <input class="input__style" asp-for="phoneNumber" placeholder="Телефон" required pattern="7-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}"
                        title="Введите номер телефона в формате: 7-999-999-99-99">
                 <span asp-validation-for="phoneNumber"></span>
             </div>
 
             <div class="form-field">
-                <input asp-for="Password" placeholder="Пароль" required>
+                <input class="input__style" asp-for="Password" placeholder="Пароль" required>
                 <span asp-validation-for="Password"></span>
             </div>
 
             <div class="form-field">
-                <input asp-for="PasswordConfirm" placeholder="Подтвредить пароль" required>
+                <input class="input__style" asp-for="PasswordConfirm" placeholder="Подтвредить пароль" required>
                 <span asp-validation-for="PasswordConfirm"></span>
             </div>
 
@@ -50,5 +50,14 @@
         <div>
             <input class="button" type="submit" value="Регистрация" />
         </div>
+        <a id="href_to_login" style="position: relative;float: right; margin-top: 10px;" href="#">Уже есть аккаунт?</a>
     </form>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $('#href_to_login').click(function (event) {
+        event.preventDefault();
+        $('main').load("@Url.Action("_Login")");
+    });
+</script>

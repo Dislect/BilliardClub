@@ -23,9 +23,13 @@
             <ul>
                 <li> <a asp-controller="Home" asp-action="Main"> <span class="menu__link"> Главная </span> </a> </li>
                 <li> <a asp-controller="Home" asp-action="Reservation"> <span class="menu__link"> Бронь</span> </a> </li>
-                <li> <a href="#"> Меню </span> </a> </li>
-                <li> <a asp-controller="Account" asp-action="Login"><span class="menu__link"><span class="menu__link"> Вход </span> </a> </li>
-                <li> <a asp-controller="Account" asp-action="Register"><span class="menu__link"> Регистрация </span> </a> </li>
+                <li> <a href="#"> <span class="menu__link"> Меню </span> </a> </li>
+                <li> <a asp-controller="Account" asp-action="Authorization"><span class="menu__link"> Личный кабинет </span> </a> </li>
+
+                @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
+                {
+                    <li> <a asp-controller="Account" asp-action="Logout"><span class="menu__link"> Выйти </span> </a> </li>
+                }
             </ul>
         </div>
     </div>
@@ -34,6 +38,12 @@
 <main>
     @RenderBody()
 </main>
+
+<footer>
+    <div class="but_fot">
+        Бильярдный клуб «The White Horse» 2021
+    </div>
+</footer>    
 
 <script type="text/javascript">shineLinks('top_menu');</script>
 <script src="~/js/MenuScript.js"></script>

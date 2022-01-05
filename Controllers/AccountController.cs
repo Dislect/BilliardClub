@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BilliardClub.Models;
 using BilliardClub.View_Models;
@@ -21,13 +22,13 @@ namespace BilliardClub.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult _Register()
         {
-            return View();
+            return PartialView();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> _Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -48,18 +49,24 @@ namespace BilliardClub.Controllers
                     }
                 }
             }
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult _Login(string returnUrl = null)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return PartialView(new LoginViewModel { ReturnUrl = returnUrl });
+        }
+
+        [HttpGet]
+        public IActionResult Authorization()
+        {
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> _Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -81,7 +88,7 @@ namespace BilliardClub.Controllers
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
             }
-            return View(model);
+            return PartialView(model);
         }
 
         public async Task<IActionResult> Logout()

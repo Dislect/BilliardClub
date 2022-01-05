@@ -1,0 +1,41 @@
+﻿@model BilliardClub.View_Models.LoginViewModel
+<link rel="stylesheet" href="~/css/loginstyle.css" type="text/css">
+<div class="login-form-container">
+    <form method="post" asp-controller="Account" asp-action="_Login">
+        <h1 class="form-title">
+            Личный кабинет
+        </h1>
+        <div>
+
+            <div class="form-field">
+                <input class="input__style" asp-for="Email" placeholder="Почта" required>
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="form-field">
+                <input class="input__style" asp-for="Password" placeholder="Пароль" required>
+                <span asp-validation-for="Password"></span>
+            </div>
+
+            <div class="form-field" style="color: black;">
+                <input asp-for="RememberMe">
+                <span> Запомнить меня </span>
+            </div>
+
+        </div>
+        <div>
+            <input class="button" type="submit" value="Войти" />
+        </div>
+        <a id="href_to_registr" style="position: relative;float: right; margin-top: 10px;" href="#">Еще нет аккаунта?</a>
+    </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $('#href_to_registr').click(function(event) {
+        event.preventDefault();
+        $('main').load("@Url.Action("_Register")", function() {
+            $('main').show('medium');
+        });
+    });
+</script>

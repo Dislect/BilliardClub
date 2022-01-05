@@ -11,6 +11,25 @@ body {
     scroll-behavior: smooth;
 }
 
+footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    font-family: 'Cormorant', serif;
+    font-size: 23px;
+    height: 74px;
+}
+
+.but_fot {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 25px;
+}
+
 
 /*    parallax     */
 .parallax {
@@ -199,7 +218,8 @@ header {
 
 /*    Reservation     */
 .content__reservation {
-    margin: 5vh 23vh
+    margin: 5vh 23vh;
+    min-height: 160vh;
 }
 
 .plan {
@@ -272,4 +292,56 @@ header {
     margin-left: 290px;
     margin-top: -220px;
 }
+
+#element_to_pop_up {
+    background-color: #fff;
+    border-radius: 10px 10px 10px 10px;
+    box-shadow: 0 0 25px 5px #999;
+    color: #111;
+    display: none;
+    width: 350px;
+    height: 250px;
+    padding: 25px;
+}
+
+.button {
+    background-color: #2b91af;
+    border-radius: 10px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.button.b-close {
+    border-radius: 7px 7px 7px 7px;
+    box-shadow: none;
+    font: bold 131% sans-serif;
+    padding: 0 6px 2px;
+    position: absolute;
+    right: -7px;
+    top: -7px;
+}
+
+#button__reserve {
+    background: aquamarine;
+    width: 200px;
+    height: 45px;
+    font-size: 20px;
+    box-shadow: 0 2px 3px rgba(1,5,1,0.3);
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 100px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 /*    Reservation     */
