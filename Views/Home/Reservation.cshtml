@@ -68,7 +68,7 @@ else
                     $('#button__reserve').css('margin-top', '50px');
                     $('#button__reserve').text('Войти');
                     $('#button__reserve').click(function() {
-                        window.location.href = '/Account/Login';
+                        window.location.href = '@Url.Action("Authorization","Account")';
                     });
                 }
             });

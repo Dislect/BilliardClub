@@ -14,20 +14,18 @@ body {
 footer {
     padding-top: 10px;
     padding-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    min-width: -webkit-fill-available;
     background: black;
     font-family: 'Cormorant', serif;
     font-size: 23px;
     height: 74px;
+    display: inline-block;
 }
 
 .but_fot {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 25px;
+    display: table;
+    margin: auto;
+    margin-top: 11px;
 }
 
 
@@ -256,7 +254,6 @@ header {
 
 .rusb p, .poolb p {
     font-size: 25px;
-    font-family: 
 }
 
 .row, .col{
