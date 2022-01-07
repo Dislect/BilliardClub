@@ -45,13 +45,27 @@
 @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
 {
     <script>
-        $('.rusb').click(function () {
+        $('.rusb').click(function() {
             var number = $(this).text();
             $('#element_to_pop_up').bPopup({
                 onOpen: function() {
                     $('#number_table').text('Вы хотите забронировать этот столик (№ ' + number + ') ?');
                     $('#button__reserve').text('Забронировать');
                 }
+            });
+
+            $('#button__reserve').click(function() {
+                $.ajax({
+                        url: '@Url.Action("AddToCartTable")',
+                        data: number,
+                        type: 'POST',
+                        success: function() {
+                            console.log(number);
+                        }
+                    })
+                    .fail(function() {
+                        console.log('Neura');
+                    });
             });
         });
     </script>

@@ -4,45 +4,22 @@ using BilliardClub.App_Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BilliardClub.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20220107142039_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("BilliardClub.Models.CartItem", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("PoolTableid")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RestaurantMenuid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("cartItemId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("PoolTableid");
-
-                    b.HasIndex("RestaurantMenuid");
-
-                    b.ToTable("CartItems");
-                });
 
             modelBuilder.Entity("BilliardClub.Models.Order", b =>
                 {
@@ -80,7 +57,7 @@ namespace BilliardClub.Migrations
                     b.Property<int?>("idTypeTable")
                         .HasColumnType("int");
 
-                    b.Property<string>("name")
+                    b.Property<string>("nane")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("tableRotationid")
@@ -129,7 +106,7 @@ namespace BilliardClub.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("name")
+                    b.Property<string>("nane")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -439,21 +416,6 @@ namespace BilliardClub.Migrations
                     b.HasIndex("restaurantMenuid");
 
                     b.ToTable("OrderRestaurantMenu");
-                });
-
-            modelBuilder.Entity("BilliardClub.Models.CartItem", b =>
-                {
-                    b.HasOne("BilliardClub.Models.PoolTable", "PoolTable")
-                        .WithMany()
-                        .HasForeignKey("PoolTableid");
-
-                    b.HasOne("BilliardClub.Models.RestaurantMenu", "RestaurantMenu")
-                        .WithMany()
-                        .HasForeignKey("RestaurantMenuid");
-
-                    b.Navigation("PoolTable");
-
-                    b.Navigation("RestaurantMenu");
                 });
 
             modelBuilder.Entity("BilliardClub.Models.Order", b =>

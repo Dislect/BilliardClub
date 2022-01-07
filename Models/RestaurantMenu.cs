@@ -7,6 +7,6 @@ namespace BilliardClub.Models
         public int id { get; set; }
         public string title { get; set; }
         public uint price { get; set; }
-        public List<RestaurantOrderHistory> RestaurantOrderHistories { get; set; } = new();
+        public List<Order> orders { get; set; } = new();
     }
 }

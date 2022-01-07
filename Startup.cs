@@ -40,11 +40,15 @@ namespace BilliardClub
                 )
                 .AddEntityFrameworkStores<Context>();
 
+            services.AddScoped(sp => Cart.GetCart(sp));
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddMemoryCache();
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSession();
             // подробные сообщения об ошибках
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();

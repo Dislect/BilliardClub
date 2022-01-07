@@ -15,8 +15,6 @@ namespace BilliardClub.Models
 
         public DateTime BirthDate { get; set; }
 
-        public List<RestaurantOrderHistory> restaurantOrderHistories { get; set; } = new();
-
-        public List<RentalHistory> rentalHistories { get; set; } = new();
+        public List<Order> orders { get; set; }
     }
 }

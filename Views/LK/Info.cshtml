@@ -1,2 +1,22 @@
-﻿@* TODO: доделать лк *@
-<h1> Добро пожаловать в личный кабинет!</h1>
+﻿
+<link rel="stylesheet" href="~/css/lk.css" type="text/css">
+
+<div class="lk">
+    <div class="block1">
+        <div class="content__block1">
+            <div class="category-wrap">
+                <h3>Пользователь: @User.Identity.Name</h3>
+                <ul>
+                    <li><a href="">Подтверждение заказа</a></li>
+                    <li><a href="">История</a></li>
+                    <li><a href="">Аккаунт</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="block2">
+        <div class="content__block2">
+            @await Html.PartialAsync("_Order")
+        </div>
+    </div>
+</div>
