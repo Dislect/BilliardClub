@@ -55,9 +55,9 @@
             });
 
             $('#button__reserve').click(function() {
-                $.ajax({
+                    $.ajax({
                         url: '@Url.Action("AddToCartTable")',
-                        data: number,
+                        data: { id: '1' },
                         type: 'POST',
                         success: function() {
                             console.log(number);

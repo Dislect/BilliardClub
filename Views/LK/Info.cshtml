@@ -1,4 +1,4 @@
-﻿
+﻿@model BilliardClub.View_Models.LKViewModel
 <link rel="stylesheet" href="~/css/lk.css" type="text/css">
 
 <div class="lk">
@@ -16,7 +16,7 @@
     </div>
     <div class="block2">
         <div class="content__block2">
-            @await Html.PartialAsync("_Order")
+            @await Html.PartialAsync("_Order", Model.CartItems)
         </div>
     </div>
 </div>

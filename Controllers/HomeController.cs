@@ -33,9 +33,9 @@ namespace BilliardClub.Controllers
         }
 
         [HttpPost]
-        public void AddToCartTable(string name)
+        public void AddToCartTable(string id)
         {
-            var table = _context.PoolTables.FirstOrDefault(x => x.name == name);
+            var table = _context.PoolTables.FirstOrDefault(x => x.id.ToString() == id);
             _cart.AddToCartTable(table);
         }
     }

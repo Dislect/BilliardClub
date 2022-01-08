@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
+using BilliardClub.View_Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,16 +28,19 @@ namespace BilliardClub.Controllers
         }
 
         [HttpGet]
-        public ActionResult Info()
+        public async Task<ActionResult> Info()
         {
-            return View();
+            LKViewModel viewModel = new()
+            {
+                CartItems = await _cart.GetCartItems()
+            };
+            return View(viewModel);
         }
 
         [HttpGet]
         public IActionResult _Order()
         {
-            _cart.CartItems = _cart.GetCartItems();
-            return PartialView(_cart.CartItems);
+            return PartialView();
         }
     }
 }

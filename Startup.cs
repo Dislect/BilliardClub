@@ -40,6 +40,7 @@ namespace BilliardClub
                 )
                 .AddEntityFrameworkStores<Context>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sp => Cart.GetCart(sp));
             services.AddMvc(option => option.EnableEndpointRouting = false);
             services.AddMemoryCache();

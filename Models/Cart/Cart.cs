@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,8 @@ namespace BilliardClub.Models
     public class Cart
     {
         private readonly Context _context;
+        public static Cart cart;
 
-        public List<PoolTable> poolTable = new();
-        public List<RestaurantMenu> restaurantMenuItems = new();
-        public List<CartItem> CartItems = new();
         public string cartId { get; set; }
 
         public Cart(Context context)
@@ -30,7 +29,8 @@ namespace BilliardClub.Models
             string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
             session.SetString("CartId", cartId);
 
-            return new Cart(context) { cartId = cartId };
+            cart = new Cart(context) {cartId = cartId};
+            return cart;
         }
 
         public void AddToCartTable(PoolTable table)
@@ -61,11 +61,11 @@ namespace BilliardClub.Models
         //    _context.SaveChanges();
         //}
 
-        public List<CartItem> GetCartItems()
+        public async Task<List<CartItem>> GetCartItems()
         {
-            return _context.CartItems.Where(item => item.cartItemId == cartId)
-                //.Include(x => x.RestaurantMenu)
-                .Include(x => x.PoolTable).ToList();
+            return await _context.CartItems.Where(item => item.cartItemId == cartId)
+                .Include(x => x.RestaurantMenu)
+                .Include(x => x.PoolTable).ToListAsync();
         }
     }
 }
