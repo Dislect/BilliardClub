@@ -64,8 +64,8 @@ namespace BilliardClub.Models
         public async Task<List<CartItem>> GetCartItems()
         {
             return await _context.CartItems.Where(item => item.cartItemId == cartId)
-                .Include(x => x.RestaurantMenu)
-                .Include(x => x.PoolTable).ToListAsync();
+                .Include(x => x.PoolTable).ThenInclude(x => x.typeTable)
+                .Include(x => x.RestaurantMenu).ToListAsync();
         }
     }
 }

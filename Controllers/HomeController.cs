@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace BilliardClub.Controllers
 {
@@ -27,9 +28,12 @@ namespace BilliardClub.Controllers
         }
 
         [HttpGet]
-        public ActionResult Reservation()
+        public async Task<ActionResult> Reservation()
         {
-            return View();
+            return View( await _context.PoolTables
+                .Include(x => x.statusTables)
+                .Include(x => x.typeTable)
+                .Include(x => x.tableRotation).ToListAsync());
         }
 
         [HttpPost]
@@ -37,6 +41,12 @@ namespace BilliardClub.Controllers
         {
             var table = _context.PoolTables.FirstOrDefault(x => x.id.ToString() == id);
             _cart.AddToCartTable(table);
+        }
+
+        [HttpGet]
+        public async Task<bool> CheckingNumberTablesInCart()
+        {
+            return (await _cart.GetCartItems()).Count(x => x.PoolTable != null && x.cartItemId == _cart.cartId) < 2;
         }
     }
 }

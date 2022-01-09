@@ -1,13 +1,12 @@
 ﻿@model List<BilliardClub.Models.CartItem>
 
-@if (Model != null)
+@if (Model.Count != 0)
 {
+    <h1 style="color: aquamarine"> Выбранные столики: </h1>
+
     @foreach (var item in Model)
     {
-        for (int i = 0; i < 10; i++)
-        {
-            <h1 style="color: red"> @item.PoolTable.name + ПОБЕДА </h1>
-        }
+        <h2 style="color: antiquewhite"> Стол № @item.PoolTable.name . Тип стола - @item.PoolTable.typeTable.name </h2>
     }
 }
 

@@ -230,6 +230,12 @@ header {
     border-radius: 50px 50px 50px 50px;
 }
 
+.rusb, .poolb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .rusb {
     height: 70px;
     width: 120px;
@@ -254,40 +260,6 @@ header {
 
 .rusb p, .poolb p {
     font-size: 25px;
-}
-
-.row, .col{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.col {
-    transform: rotate(90deg);
-}
-
-    .col p {
-        transform: rotate(-90deg);
-    }
-
-.table1 {
-    margin-left: 125px;
-    margin-top: 150px;
-}
-
-.table2 {
-    margin-left: 290px;
-    margin-top: 90px;
-}
-
-.table3 {
-    margin-left: 125px;
-    margin-top: -70px;
-}
-
-.table4 {
-    margin-left: 290px;
-    margin-top: -220px;
 }
 
 #element_to_pop_up {

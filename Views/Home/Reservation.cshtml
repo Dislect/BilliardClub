@@ -1,25 +1,30 @@
-﻿<div class="content__reservation">
+﻿@using System.Text
+@model List<BilliardClub.Models.PoolTable>
+@{
+    Dictionary<string, string> cssStyle = new Dictionary<string, string>()
+    {
+        ["Русский бильярд"] = "rusb",
+        ["Амереканский пул"] = "poolb"
+    };
+}
+
+<div class="content__reservation">
     <div class="plan">
-        <div class="table1 rusb row">
-            <p>
-                1
-            </p>
-        </div>
-        <div class="table2 rusb row">
-            <p>
-                2
-            </p>
-        </div>
-        <div class="table3 rusb col">
-            <p>
-                3
-            </p>
-        </div>
-        <div class="table4 rusb col">
-            <p>
-                4
-            </p>
-        </div>
+        @foreach (var poolTable in Model)
+        {
+            string divStyle = "margin-left: " + poolTable.tableX + "px;" +
+                          "margin-top: " + poolTable.tableY + "px;" +
+                          "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);";
+            string pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
+
+            <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger">
+
+                <p class="numberTable" style="@pStyle">
+                    @poolTable.name
+                </p>
+                <input class="id" type="hidden" value="@poolTable.id">
+            </div>
+        }
     </div>
 </div>
 
@@ -45,47 +50,108 @@
 @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
 {
     <script>
-        $('.rusb').click(function() {
-            var number = $(this).text();
+        function ShowReservation(This) {
+            var id = $(".id", This).val();
+            var numberTable = $(".numberTable", This).text();
             $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
                 onOpen: function() {
-                    $('#number_table').text('Вы хотите забронировать этот столик (№ ' + number + ') ?');
+                    $('#number_table').text('Вы хотите забронировать этот столик (№ ' + numberTable + ') ?');
                     $('#button__reserve').text('Забронировать');
                 }
             });
 
-            $('#button__reserve').click(function() {
-                    $.ajax({
-                        url: '@Url.Action("AddToCartTable")',
-                        data: { id: '1' },
-                        type: 'POST',
-                        success: function() {
-                            console.log(number);
-                        }
-                    })
-                    .fail(function() {
-                        console.log('Neura');
+            $('#button__reserve').unbind("click").click(function() {
+                $.ajax({
+                    url: '@Url.Action("AddToCartTable")',
+                    data: { id: id },
+                    type: 'POST'
+                }).done(function() {
+                    $('#number_table').html('Стол добавлен в список бронирования!' +
+                        '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
+                    $('#button__reserve').css({
+                        'margin-top': '15px',
+                        'padding': '5px',
+                        'height': 'auto'
+                    }).text('Перейти в личный кабинет').click(function () {
+                        window.location.href = '@Url.Action("Info", "LK")';
                     });
+                    This.removeClass('trigger');
+                });
             });
+        }
+
+        function ShowErrorMessage() {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                onOpen: function () {
+                    $(this).css('width', '700px');
+                    $('#number_table').html('К сожалению, один пользователь может забронировать не более двух столов за раз.' +
+                        '</br> <br/> Чтобы забронировать другой стол, удалите ранее добавленные столы в личном кабинете!');
+                    $('#button__reserve').css({
+                        'margin-top': '15px',
+                        'padding': '5px',
+                        'height': 'auto'
+                    }).text('Перейти в личный кабинет').click(function () {
+                        window.location.href = '@Url.Action("Info", "LK")';
+                    });
+                }
+            });
+        }
+
+        function SelfChecking(item) {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                autoClose: 2500,
+                onOpen: function() {
+                    $(this).css('width', '400px');
+                    $('#number_table').html('Вы уже выбирали этот стол! <br/> <br/> Пожалуйста, выберите другой.');
+                    $('#button__reserve').hide();
+                }
+            });
+        }
+
+        function CheckingNumberTablesInCart(item) {
+            $.ajax({
+                url: '@Url.Action("CheckingNumberTablesInCart")',
+                type: 'GET'
+            }).done(function(result) {
+                if (result) {
+                    if (!item.hasClass("trigger")) {
+                        SelfChecking(item);
+                    } else {
+                        ShowReservation(item);
+                    }
+                } else {
+                    ShowErrorMessage();
+                }
+            });
+        }
+            
+        $('.trigger').unbind("click").click(function () {
+            CheckingNumberTablesInCart($(this));
         });
+
     </script>
 }
 else
 {
     <script>
-        $('.rusb').click(function () {
-            var number = $(this).text();
-            $('#element_to_pop_up').bPopup({
-                onOpen: function () {
-                    $(this).css('width', '700px');
-                    $('#number_table').html('Бронирование бильярдных столов возможно только для авторизированных пользователей! <br/> <br/> Пожалуйста, войдите в личный кабинет.');
-                    $('#button__reserve').css('margin-top', '50px');
-                    $('#button__reserve').text('Войти');
-                    $('#button__reserve').click(function() {
-                        window.location.href = '@Url.Action("Authorization","Account")';
-                    });
-                }
-            });
+    $('.trigger').click(function() {
+        $('#element_to_pop_up').bPopup({
+            fadeSpeed: 'slow',
+            followSpeed: 1500,
+            onOpen: function () {
+                $(this).css('width', '700px');
+                $('#number_table').html('Бронирование бильярдных столов возможно только для авторизированных пользователей! <br/> <br/> Пожалуйста, войдите в личный кабинет.');
+                $('#button__reserve').css('margin-top', '50px').text('Войти').click(function() {
+                    window.location.href = '@Url.Action("Authorization", "Account")';
+                });
+            }
         });
+    });
     </script>
 }
