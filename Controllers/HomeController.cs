@@ -31,16 +31,19 @@ namespace BilliardClub.Controllers
         public async Task<ActionResult> Reservation()
         {
             return View( await _context.PoolTables
-                .Include(x => x.statusTables)
+                .Include(x => x.statusTables).ThenInclude(x => x.status)
                 .Include(x => x.typeTable)
                 .Include(x => x.tableRotation).ToListAsync());
         }
 
         [HttpPost]
-        public void AddToCartTable(string id)
+        public async Task AddToCartTable(string id)
         {
             var table = _context.PoolTables.FirstOrDefault(x => x.id.ToString() == id);
+            var statusInCart = _context.Status.FirstOrDefault(x => x.id == 3);
+            table.statusTables.Add(new StatusTable() {dateStart = DateTime.Now, status = statusInCart});
             _cart.AddToCartTable(table);
+            await _context.SaveChangesAsync();
         }
 
         [HttpGet]

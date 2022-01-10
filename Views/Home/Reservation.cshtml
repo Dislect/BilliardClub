@@ -1,6 +1,10 @@
 ﻿@using System.Text
 @model List<BilliardClub.Models.PoolTable>
 @{
+    string divStyle;
+    string pStyle;
+    string trclass = "trigger";
+    string inCart = "inCart";
     Dictionary<string, string> cssStyle = new Dictionary<string, string>()
     {
         ["Русский бильярд"] = "rusb",
@@ -12,18 +16,30 @@
     <div class="plan">
         @foreach (var poolTable in Model)
         {
-            string divStyle = "margin-left: " + poolTable.tableX + "px;" +
-                          "margin-top: " + poolTable.tableY + "px;" +
-                          "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);";
-            string pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
+            divStyle = "margin-left: " + poolTable.tableX + "px;" +
+                       "margin-top: " + poolTable.tableY + "px;" +
+                       "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);";
 
-            <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger">
+            pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
-                <p class="numberTable" style="@pStyle">
-                    @poolTable.name
-                </p>
-                <input class="id" type="hidden" value="@poolTable.id">
-            </div>
+            if (poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
+            {
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inCart">
+                    <p class="numberTable" style="@pStyle">
+                        @poolTable.name
+                    </p>
+                    <input class="id" type="hidden" value="@poolTable.id">
+                </div>
+            }
+            else
+            {
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass">
+                    <p class="numberTable" style="@pStyle">
+                        @poolTable.name
+                    </p>
+                    <input class="id" type="hidden" value="@poolTable.id">
+                </div>
+            }
         }
     </div>
 </div>
@@ -58,7 +74,7 @@
                 followSpeed: 1500,
                 onOpen: function() {
                     $('#number_table').text('Вы хотите забронировать этот столик (№ ' + numberTable + ') ?');
-                    $('#button__reserve').text('Забронировать');
+                    $('#button__reserve').show().text('Забронировать');
                 }
             });
 
@@ -77,7 +93,7 @@
                     }).text('Перейти в личный кабинет').click(function () {
                         window.location.href = '@Url.Action("Info", "LK")';
                     });
-                    This.removeClass('trigger');
+                    This.addClass('inCart');
                 });
             });
         }
@@ -120,7 +136,7 @@
                 type: 'GET'
             }).done(function(result) {
                 if (result) {
-                    if (!item.hasClass("trigger")) {
+                    if (item.hasClass("inCart")) {
                         SelfChecking(item);
                     } else {
                         ShowReservation(item);
@@ -140,18 +156,18 @@
 else
 {
     <script>
-    $('.trigger').click(function() {
-        $('#element_to_pop_up').bPopup({
-            fadeSpeed: 'slow',
-            followSpeed: 1500,
-            onOpen: function () {
-                $(this).css('width', '700px');
-                $('#number_table').html('Бронирование бильярдных столов возможно только для авторизированных пользователей! <br/> <br/> Пожалуйста, войдите в личный кабинет.');
-                $('#button__reserve').css('margin-top', '50px').text('Войти').click(function() {
-                    window.location.href = '@Url.Action("Authorization", "Account")';
-                });
-            }
+        $('.trigger').click(function() {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                onOpen: function () {
+                    $(this).css('width', '700px');
+                    $('#number_table').html('Бронирование бильярдных столов возможно только для авторизированных пользователей! <br/> <br/> Пожалуйста, войдите в личный кабинет.');
+                    $('#button__reserve').css('margin-top', '50px').text('Войти').click(function() {
+                        window.location.href = '@Url.Action("Authorization", "Account")';
+                    });
+                }
+            });
         });
-    });
     </script>
 }
