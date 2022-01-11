@@ -17,7 +17,7 @@ namespace BilliardClub.Models
 
         public string cartId { get; set; }
 
-        public List<CartItem> CartItems { get; set; } = new();
+        public List<CartItem> CartItems => GetCartItems().Result;
 
         public Cart(Context context)
         {
@@ -55,15 +55,21 @@ namespace BilliardClub.Models
             _context.SaveChanges();
         }
 
-        //TODO: доделать удаление итемов из карзины
-        //public void Delete(int id)
-        //{
-        //    listItems = GetCartItems();
-        //    _context.CartItems.Remove(listItems.Where(x => x.id == id).FirstOrDefault());
-        //    _context.SaveChanges();
-        //}
+        public void DeleteTableInCart(PoolTable table)
+        {
+            _context.CartItems.Remove(CartItems.First(x => x.PoolTable.id == table.id));
+            _context.StatusTables.Remove(_context.StatusTables.Include(x => x.poolTable).Include(x => x.status)
+                .First(x => x.poolTable.id == table.id && x.status.id == 3));
+            _context.SaveChanges();
+        }
 
-        public async Task<List<CartItem>> GetCartItems()
+        public void DeleteProductInCart(RestaurantMenu restaurantMenu)
+        {
+            _context.CartItems.Remove(CartItems.First(x => x.id == restaurantMenu.id));
+            _context.SaveChanges();
+        }
+
+        private async Task<List<CartItem>> GetCartItems()
         {
             return await _context.CartItems.Where(item => item.cartItemId == cartId)
                 .Include(x => x.PoolTable).ThenInclude(x => x.typeTable)

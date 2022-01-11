@@ -28,11 +28,11 @@ namespace BilliardClub.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Info()
+        public ActionResult Info()
         {
             LKViewModel viewModel = new()
             {
-                CartItems = await _cart.GetCartItems()
+                CartItems = _cart.CartItems
             };
             return View(viewModel);
         }
@@ -42,5 +42,14 @@ namespace BilliardClub.Controllers
         {
             return PartialView();
         }
+
+        [HttpPost]
+        public void DeleteTableInCart(int id)
+        {
+            var table = _context.PoolTables.FirstOrDefault(x => x.id == id);
+            _cart.DeleteTableInCart(table);
+        }
     }
 }
+
+// TODO: таблицу order привязать к user + cart (cart_id)

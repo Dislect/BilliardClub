@@ -4,7 +4,8 @@
     string divStyle;
     string pStyle;
     string trclass = "trigger";
-    string inCart = "inCart";
+    string inMyCart = "inMyCart";
+    string inOtherCart = "inOtherCart";
     Dictionary<string, string> cssStyle = new Dictionary<string, string>()
     {
         ["Русский бильярд"] = "rusb",
@@ -24,7 +25,16 @@
 
             if (Model.cart.CartItems.Exists(x => x.PoolTable.id == poolTable.id))
             {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inCart">
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inMyCart">
+                    <p class="numberTable" style="@pStyle">
+                        @poolTable.name
+                    </p>
+                    <input class="id" type="hidden" value="@poolTable.id">
+                </div>
+            }
+            else if(poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
+            {
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inOtherCart">
                     <p class="numberTable" style="@pStyle">
                         @poolTable.name
                     </p>
@@ -78,12 +88,16 @@
                 }
             });
 
-            $('#button__reserve').unbind("click").click(function() {
+            $('#button__reserve').unbind("click").click(function () {
+                $(this).prop('disabled', true);
+                setTimeout(function() {
+                    $(this).prop('disabled', false);
+                }.bind(this), 100);
                 $.ajax({
                     url: '@Url.Action("AddToCartTable")',
                     data: { id: id },
                     type: 'POST'
-                }).done(function() {
+                }).done(function () {
                     $('#number_table').html('Стол добавлен в список бронирования!' +
                         '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
                     $('#button__reserve').css({
@@ -93,7 +107,7 @@
                     }).text('Перейти в личный кабинет').click(function () {
                         window.location.href = '@Url.Action("Info", "LK")';
                     });
-                    This.addClass('inCart');
+                    This.addClass('inMyCart');
                 });
             });
         }
@@ -117,7 +131,7 @@
             });
         }
 
-        function SelfChecking(item) {
+        function ShowMessageInMyCart() {
             $('#element_to_pop_up').bPopup({
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
@@ -130,14 +144,29 @@
             });
         }
 
+        function ShowMessageInOtherCart() {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                autoClose: 2500,
+                onOpen: function() {
+                    $(this).css('width', '400px');
+                    $('#number_table').html('В данный момент этот стол бронирует кто то другой. <br/> <br/> Пожалуйста, выберите другой стол.');
+                    $('#button__reserve').hide();
+                }
+            });
+        }
+
         function CheckingNumberTablesInCart(item) {
             $.ajax({
                 url: '@Url.Action("CheckingNumberTablesInCart")',
                 type: 'GET'
             }).done(function(result) {
                 if (result) {
-                    if (item.hasClass("inCart")) {
-                        SelfChecking(item);
+                    if (item.hasClass("inMyCart")) {
+                        ShowMessageInMyCart();
+                    } else if (item.hasClass("inOtherCart")) {
+                        ShowMessageInOtherCart();
                     } else {
                         ShowReservation(item);
                     }

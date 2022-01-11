@@ -4,9 +4,42 @@
 {
     <h1 style="color: aquamarine"> Выбранные столики: </h1>
 
-    @foreach (var item in Model)
-    {
-        <h2 style="color: antiquewhite"> Стол № @item.PoolTable.name . Тип стола - @item.PoolTable.typeTable.name </h2>
-    }
+    <table>
+        <thead>
+            <tr>
+                <th> № </th>
+                <th> Тип </th>
+                <th>  </th>
+            </tr>
+        </thead>
+        <tbody style="color: antiquewhite">
+            @foreach (var item in Model)
+            {
+                <tr id="@item.PoolTable.id">
+                    <td> Стол № @item.PoolTable.name </td>
+                    <td> Тип стола - @item.PoolTable.typeTable.name </td>
+                    <td>
+                        <button class="remove__table"> Удалить </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $('.remove__table').unbind("click").click(function () {
+            var tr = $(this).parent().parent();
+            var id = $(tr).attr('id');
+            console.log('id{'+id+'}');
+            $.ajax({
+                url: '@Url.Action("DeleteTableInCart", "LK")',
+                type: 'POST',
+                data: {id: id}
+            }).done(function() {
+                $(tr).remove();
+            });
+        });
+    </script>
 }
 
