@@ -17,6 +17,8 @@ namespace BilliardClub.Models
 
         public string cartId { get; set; }
 
+        public List<CartItem> CartItems { get; set; } = new();
+
         public Cart(Context context)
         {
             this._context = context;

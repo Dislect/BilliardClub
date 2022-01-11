@@ -1,5 +1,5 @@
 ﻿@using System.Text
-@model List<BilliardClub.Models.PoolTable>
+@model BilliardClub.View_Models.ReservationViewModel
 @{
     string divStyle;
     string pStyle;
@@ -14,7 +14,7 @@
 
 <div class="content__reservation">
     <div class="plan">
-        @foreach (var poolTable in Model)
+        @foreach (var poolTable in Model.poolTables)
         {
             divStyle = "margin-left: " + poolTable.tableX + "px;" +
                        "margin-top: " + poolTable.tableY + "px;" +
@@ -22,7 +22,7 @@
 
             pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
-            if (poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
+            if (Model.cart.CartItems.Exists(x => x.PoolTable.id == poolTable.id))
             {
                 <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inCart">
                     <p class="numberTable" style="@pStyle">

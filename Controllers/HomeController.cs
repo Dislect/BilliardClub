@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
+using BilliardClub.View_Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,20 +31,23 @@ namespace BilliardClub.Controllers
         [HttpGet]
         public async Task<ActionResult> Reservation()
         {
-            return View( await _context.PoolTables
-                .Include(x => x.statusTables).ThenInclude(x => x.status)
-                .Include(x => x.typeTable)
-                .Include(x => x.tableRotation).ToListAsync());
+            _cart.CartItems = await _cart.GetCartItems();
+            var model = new ReservationViewModel()
+            {
+                cart = _cart,
+                poolTables = await _context.PoolTables
+                    .Include(x => x.statusTables).ThenInclude(x => x.status)
+                    .Include(x => x.typeTable)
+                    .Include(x => x.tableRotation).ToListAsync()
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public async Task AddToCartTable(string id)
+        public void AddToCartTable(string id)
         {
             var table = _context.PoolTables.FirstOrDefault(x => x.id.ToString() == id);
-            var statusInCart = _context.Status.FirstOrDefault(x => x.id == 3);
-            table.statusTables.Add(new StatusTable() {dateStart = DateTime.Now, status = statusInCart});
             _cart.AddToCartTable(table);
-            await _context.SaveChangesAsync();
         }
 
         [HttpGet]
