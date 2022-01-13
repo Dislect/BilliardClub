@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using Microsoft.AspNetCore.Http;
@@ -35,14 +36,27 @@ namespace BilliardClub.Models
             return cart;
         }
 
-        public void AddToCartTable(PoolTable table)
+        public Task AddToCartTable(PoolTable table)
         {
+            var statusInCart = _context.Status.FirstOrDefault(x => x.id == 3); // "3 = В корзине"
+            var statusTables = new StatusTable() { dateStart = DateTime.Now, status = statusInCart };
+            table.statusTables.Add(statusTables);
             _context.CartItems.Add(new CartItem()
             {
                 cartItemId = cartId,
                 PoolTable = table
-            }); 
+            });
             _context.SaveChanges();
+
+            // удаление стола из корзины через некоторое время
+            var deleteTableInCartTask = Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(10000);
+                _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartItemId));
+                _context.StatusTables.Remove(_context.StatusTables.First(x => x.id == statusTables.id));
+                _context.SaveChanges();
+            });
+            return deleteTableInCartTask;
         }
 
         public void AddToCartProduct(RestaurantMenu product)

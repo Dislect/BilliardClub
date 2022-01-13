@@ -27,7 +27,11 @@ namespace BilliardClub
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Context>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure();
+                    }));
 
             services.AddIdentity<User, IdentityRole>(options =>
                     {

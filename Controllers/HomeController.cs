@@ -17,8 +17,6 @@ namespace BilliardClub.Controllers
         private readonly Context _context;
         private readonly Cart _cart;
 
-        public List<CartItem> CartItems { get; set; }
-
         public HomeController(Context context, Cart cart)
         {
             _context = context;
@@ -37,17 +35,12 @@ namespace BilliardClub.Controllers
         }
 
         [HttpPost]
-        public void AddToCartTable(int id)
+        public async Task AddToCartTable(int id)
         {
             if (!_cart.CartItems.Exists(x => x.PoolTable.id == id))
             {
                 var table = _context.PoolTables.FirstOrDefault(x => x.id == id);
-                var statusInCart = _context.Status.FirstOrDefault(x => x.id == 3);
-                var statusTables = new StatusTable() { dateStart = DateTime.Now, status = statusInCart };
-
-                _cart.AddToCartTable(table);
-                table.statusTables.Add(statusTables); 
-                _context.SaveChanges();
+                await _cart.AddToCartTable(table);
             }
         }
 

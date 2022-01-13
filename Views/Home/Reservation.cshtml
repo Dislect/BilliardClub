@@ -23,7 +23,8 @@
 
             pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
-            if (Model.cart.CartItems.Exists(x => x.PoolTable.id == poolTable.id))
+            if (Model.cart.CartItems.Exists(x => x.PoolTable.id == poolTable.id 
+                                                 && Model.cart.cartId == x.cartItemId))
             {
                 <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inMyCart">
                     <p class="numberTable" style="@pStyle">
@@ -88,26 +89,30 @@
                 }
             });
 
-            $('#button__reserve').unbind("click").click(function () {
+            $('#button__reserve').unbind("click").click(function() {
+
                 $(this).prop('disabled', true);
                 setTimeout(function() {
-                    $(this).prop('disabled', false);
-                }.bind(this), 100);
+                        $(this).prop('disabled', false);
+                    }.bind(this),
+                    100);
+
                 $.ajax({
                     url: '@Url.Action("AddToCartTable")',
                     data: { id: id },
-                    type: 'POST'
-                }).done(function () {
-                    $('#number_table').html('Стол добавлен в список бронирования!' +
-                        '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
-                    $('#button__reserve').css({
-                        'margin-top': '15px',
-                        'padding': '5px',
-                        'height': 'auto'
-                    }).text('Перейти в личный кабинет').click(function () {
-                        window.location.href = '@Url.Action("Info", "LK")';
-                    });
-                    This.addClass('inMyCart');
+                    type: 'POST',
+                    beforeSend: function() {
+                        $('#number_table').html('Стол добавлен в список бронирования!' +
+                            '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
+                        $('#button__reserve').css({
+                            'margin-top': '15px',
+                            'padding': '5px',
+                            'height': 'auto'
+                        }).text('Перейти в личный кабинет').click(function() {
+                            window.location.href = '@Url.Action("Info", "LK")';
+                        });
+                        This.addClass('inMyCart');
+                    }
                 });
             });
         }
