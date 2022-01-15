@@ -65,3 +65,132 @@
         color: white;
     }
 /* navigation */
+
+
+/* _Order */
+.order__confirm__block {
+    min-height: 84vh;
+    padding-left: 30px;
+    padding-top: 6px;
+}
+
+.table {
+    width: 60%;
+    border: none;
+    margin-bottom: 20px;
+}
+
+    .table thead th {
+        font-weight: bold;
+        text-align: left;
+        border: none;
+        padding: 10px 15px;
+        background: #292929;
+        font-size: 14px;
+    }
+
+.table thead tr th:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.table thead tr th:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.table tbody td {
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.table tbody tr{
+    background: #404040;
+}
+
+
+.table tbody tr td:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.table tbody tr td:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+
+.quantity {
+    position: relative;
+    margin-left: 10px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity input {
+    width: 45px;
+    height: 42px;
+    line-height: 1.65;
+    float: left;
+    display: block;
+    padding: 0;
+    margin: 0;
+    padding-left: 20px;
+    border: 1px solid #eee;
+}
+
+.quantity input:focus {
+    outline: 0;
+}
+
+.quantity-nav {
+    float: left;
+    position: relative;
+    height: 41px;
+}
+
+.quantity-button {
+    background: white;
+    cursor: pointer;
+    border-left: 1px solid #eee;
+    width: 20px;
+    text-align: center;
+    color: #333;
+    font-size: 13px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif !important;
+    line-height: 1.7;
+}
+
+    .quantity-button.quantity-up {
+        position: absolute;
+        height: 50%;
+        top: 0;
+        border-bottom: 1px solid #eee;
+        user-select: none;  
+    }
+
+.quantity-button.quantity-down {
+    position: absolute;
+    bottom: -1px;
+    height: 50%;
+}
+
+.remove__tr {
+    color: #fff; 
+    user-select: none;
+    background: #292929; 
+    border-radius: 20px;
+    padding: .7em 1.5em; 
+}
+
+    .remove__tr:hover {
+        background: black;
+    }
+
+    .remove__tr:active {
+        background: black;
+    }
+/* _Order */

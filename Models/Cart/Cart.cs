@@ -51,7 +51,7 @@ namespace BilliardClub.Models
             // удаление стола из корзины через некоторое время
             var deleteTableInCartTask = Task.Factory.StartNew(() =>
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(60000);
                 _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartItemId));
                 _context.StatusTables.Remove(_context.StatusTables.First(x => x.id == statusTables.id));
                 _context.SaveChanges();
