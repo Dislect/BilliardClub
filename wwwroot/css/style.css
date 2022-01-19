@@ -258,9 +258,10 @@ header {
     cursor: pointer;
 }
 
-.rusb p, .poolb p {
-    font-size: 25px;
-}
+    .rusb p, .poolb p {
+        user-select: none;
+        font-size: 25px;
+    }
 
 #element_to_pop_up {
     background-color: #fff;

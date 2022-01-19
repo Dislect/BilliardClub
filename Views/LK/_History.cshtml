@@ -1,0 +1,44 @@
+﻿@model List<BilliardClub.Models.Order>
+
+<div class="order__history__block">
+    <h1> История заказов </h1>
+    <div class="center">
+        <table class="table">
+            <thead>
+            <tr>
+                <th> Дата заказа </th>
+                <th> Забронированные столы </th>
+                <th> Заказанная еда / напитки </th>
+                <th> Сумма заказа </th>
+            </tr>
+            </thead>
+            <tbody style="color: antiquewhite">
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td> @order.orderDate.ToString("D") </td>
+                    <td>
+                        @if (order.poolTables.Count != 0)
+                        {
+                            foreach (var poolTable in order.poolTables)
+                            {
+                                <p>Стол №@poolTable.name</p> 
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (order.restaurantMenu.Count != 0)
+                        {
+                            foreach (var restaurantMenu in order.restaurantMenu)
+                            {
+                                <p>@restaurantMenu.title</p> 
+                            }
+                        }
+                    </td>
+                    <td> @order.cheque </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

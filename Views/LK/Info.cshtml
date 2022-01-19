@@ -7,9 +7,9 @@
             <div class="category-wrap">
                 <h3>Пользователь: @User.Identity.Name</h3>
                 <ul>
-                    <li><a href="">Подтверждение заказа</a></li>
-                    <li><a href="">История</a></li>
-                    <li><a href="">Аккаунт</a></li>
+                    <li><a id="href_to_order_confirm" href="">Подтверждение заказа</a></li>
+                    <li><a id="href_to_order_history" href="">История</a></li>
+                    <li><a id="href_to_account" href="">Аккаунт</a></li>
                 </ul>
             </div>
         </div>
@@ -20,3 +20,29 @@
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/js/jquery.bpopup.min.js"></script>
+
+<script>
+    $('#href_to_order_confirm').click(function (event) {
+        $('li > a').css('background', '');
+        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_Order")");
+    });
+
+    $('#href_to_order_history').click(function (event) {
+        $('li > a').css('background', '');
+        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_History")");
+    });
+
+    $('#href_to_account').click(function (event) {
+        $('li > a').css('background', '');
+        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_AccountSettings")");
+    });
+</script>

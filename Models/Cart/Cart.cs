@@ -83,6 +83,17 @@ namespace BilliardClub.Models
             _context.SaveChanges();
         }
 
+        public void DeleteAllItemsInCart()
+        {
+            var tables = cart.CartItems.Where(x => x.PoolTable != null).Select(x => x.PoolTable).ToList();
+            foreach (var table in tables)
+            {
+                DeleteTableInCart(table);
+            }
+            _context.CartItems.RemoveRange(CartItems);
+            _context.SaveChanges();
+        }
+
         private async Task<List<CartItem>> GetCartItems()
         {
             return await _context.CartItems.Where(item => item.cartItemId == cartId)

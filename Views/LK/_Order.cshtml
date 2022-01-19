@@ -8,37 +8,37 @@
         <div class="center">
             <table class="table">
                 <thead>
-                <tr>
-                    <th> Стол № </th>
-                    <th> Тип стола </th>
-                    <th> Цена/час </th>
-                    <th> Кол-во часов </th>
-                    <th>  </th>
-                </tr>
+                    <tr>
+                        <th> Стол № </th>
+                        <th> Тип стола </th>
+                        <th> Цена/час </th>
+                        <th> Кол-во часов </th>
+                        <th>  </th>
+                    </tr>
                 </thead>
                 <tbody style="color: antiquewhite">
-                @foreach (var item in Model)
-                {
-                    <tr id="@item.PoolTable.id">
-                        <td> №@item.PoolTable.name </td>
-                        <td> @item.PoolTable.typeTable.name </td>
-                        <td>  @item.PoolTable.typeTable.price рублей/час </td>
-                        <td>
-                            <div class="quantity">
-                                <input type="number" min="1" max="6" step="1" value="1">
-                            </div>
-                        </td>
-                        <td>
-                            <button class="remove__tr"> Удалить </button>
-                        </td>
-                    </tr>
-                }
+                    @foreach (var item in Model)
+                    {
+                        <tr class="position" id="@item.PoolTable.id">
+                            <td> №@item.PoolTable.name </td>
+                            <td> @item.PoolTable.typeTable.name </td>
+                            <td>  <span class="price">@item.PoolTable.typeTable.price</span> рублей/час </td>
+                            <td>
+                                <div class="quantity">
+                                    <input type="number" min="1" max="6" step="1" value="1">
+                                </div>
+                            </td>
+                            <td>
+                                <button class="remove__tr"> Удалить </button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
-
+        <h3 id="sumPrice"></h3>
         <div>
-            <button class="submit__order"> Оформить бронирование </button>
+            <button id="submit__order"> Подтвердить заказ </button>
         </div>
     }
     else
@@ -47,10 +47,9 @@
     }
 </div>
 
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+
     $('.remove__tr').unbind("click").click(function () {
         var tr = $(this).parent().parent();
         var id = $(tr).attr('id');
@@ -63,9 +62,10 @@
         });
     });
 
+    $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + 'руб.');
     $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input');
     $('.quantity').each(function() {
-        var spinner = jQuery(this),
+        var spinner = $(this),
             input = spinner.find('input[type="number"]'),
             btnUp = spinner.find('.quantity-up'),
             btnDown = spinner.find('.quantity-down'),
@@ -81,6 +81,7 @@
             }
             spinner.find("input").val(newVal);
             spinner.find("input").trigger("change");
+            $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + 'руб.');
         });
 
         btnDown.click(function() {
@@ -92,7 +93,32 @@
             }
             spinner.find("input").val(newVal);
             spinner.find("input").trigger("change");
+            $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + 'руб.');
         });
     });
+
+    function SumOrderPrice() {
+        var sum = 0;
+        $('.position').each(function() {
+            var rowPosition = $(this),
+                price = rowPosition.find('.price').text(),
+                quantityHours = rowPosition.find('input[type="number"]').val();
+            sum += price * quantityHours;
+        });
+        return sum;
+    }
+
+    $('#submit__order').unbind("click").click(function () {
+        var sum = SumOrderPrice();
+        $.ajax({
+            url: '@Url.Action("ConfirmOrder")',
+            data: { cheque: sum },
+            type: 'POST'
+        }).done(function () {
+            $('.center').hide();
+            alert("Заказ подтвержден");
+        });
+    });
+
 </script>
 

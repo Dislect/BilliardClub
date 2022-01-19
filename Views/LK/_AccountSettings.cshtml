@@ -1,0 +1,61 @@
+﻿@model BilliardClub.View_Models.ChangePasswordViewModel
+
+<div class="account__settings__block">
+    <h1> Настройки аккаунта </h1>
+    <h2>Изменение пароля для пользователя @Model.Email</h2>
+    <form>
+        <div>
+            <label asp-for="OldPassword"> Старый пароль </label>
+            <input type="text" asp-for="OldPassword" />
+        </div>
+        <div>
+            <label asp-for="NewPassword"> Новый пароль </label>
+            <input type="text" asp-for="NewPassword" />
+        </div>
+        <div>
+            <input id="change__password" type="button" value="Сохранить" />
+        </div>
+    </form>
+</div>
+
+<div id="element_to_pop_up">
+    <span class="button b-close">
+        <span>X</span>
+    </span>
+    <div class="center">
+        <h2 id="massage"></h2>
+    </div>
+</div>
+
+
+<script>
+    $('#change__password').unbind("click").click(function () {
+        $.ajax({
+            url: '@Url.Action("ChangePassword")',
+            data: {
+                // TODO: сериализовать форму
+                'OldPassword': 'admin',
+                'NewPassword': 'ad'
+            },
+            type: 'POST'
+        }).done(function (boolResult) {
+            if (boolResult) {
+                $('#element_to_pop_up').bPopup({
+                    fadeSpeed: 'slow',
+                    followSpeed: 1500,
+                    onOpen: function() {
+                        $('#massage').text('Пароль успешно изменен');
+                    }
+                });   
+            } else {
+                $('#element_to_pop_up').bPopup({
+                    fadeSpeed: 'slow',
+                    followSpeed: 1500,
+                    onOpen: function() {
+                        $('#massage').text('Что то пошло не так!');
+                    }
+                });
+            }
+        });
+    });
+</script>
