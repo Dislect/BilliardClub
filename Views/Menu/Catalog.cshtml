@@ -1,20 +1,30 @@
-﻿<link rel="stylesheet" href="~/css/catalog.css" type="text/css">
+﻿@model List<BilliardClub.Models.RestaurantMenu>
 
+<link rel="stylesheet" href="~/css/catalog.css" type="text/css">
 
 <div class="container__catalog">
-    @for (int i = 0; i < 10; i++)
+    @foreach (var item in Model)
     {
         <div class="product-wrap">
             <div class="product-item">
+                @* TODO: добавить в бд столбец *@
+                <input type="hidden" value="@item.id" />
                 <img src="https://st.depositphotos.com/1003272/1632/i/600/depositphotos_16322913-stock-photo-red-apple.jpg">
                 <div class="product-buttons">
                     <a href="" class="cart_button">В корзину</a>
                 </div>
             </div>
             <div class="product-title">
-                <a href="">Яблоко</a>
-                <span class="product-price">₽ 1999</span>
+                <a href="">@item.title</a>
+                <span class="product-price">@item.price.ToString("c")</span>
             </div>
         </div>
     }
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/js/jquery.bpopup.min.js"></script>
+
+<script>
+    @* TODO: добавить скрипт добавления в корзину *@
+</script>

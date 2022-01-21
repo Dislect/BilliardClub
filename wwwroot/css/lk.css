@@ -31,7 +31,7 @@
         content: "";
         width: 6px;
         height: 6px;
-        background: white;
+        background: #292929;
         position: absolute;
         right: 5px;
         bottom: 2px;
@@ -253,7 +253,61 @@ input[type=number]::-webkit-outer-spin-button {
     min-height: 84vh;
     padding-left: 30px;
     padding-top: 6px;
+    margin-bottom: 6px;
 }
 
+.account__settings__block {
+    justify-content: center;
+    align-items: center;
+}
 
+.input__style {
+    height: 45px;
+    width: 250px;
+    color: #3B5983;
+    font-size: 14px;
+    line-height: 16px;
+    border: 2px solid #E9F2FF;
+    border-radius: 5px;
+    padding-left: 25px;
+    margin-top: 15px;
+}
+
+.input__style:focus {
+    outline: none;
+    border: 2px solid #C1D9FD;
+}
+
+.input__style:valid {
+    border-color: greenyellow;
+}
+
+.input__style:invalid {
+    border-color: orange;
+}
+
+.input__style:not(:focus):invalid {
+    border-color: #C1D9FD;
+}
+
+.button {
+    width: 250px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    height: 45px;
+    background: #247FFF;
+    border-radius: 5px;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.button:hover {
+    background-color: #0D6CF2;
+}
 /* AccountSettings */

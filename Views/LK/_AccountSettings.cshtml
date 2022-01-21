@@ -1,21 +1,49 @@
-﻿@model BilliardClub.View_Models.ChangePasswordViewModel
+﻿@model BilliardClub.Models.User
 
 <div class="account__settings__block">
     <h1> Настройки аккаунта </h1>
-    <h2>Изменение пароля для пользователя @Model.Email</h2>
-    <form>
-        <div>
-            <label asp-for="OldPassword"> Старый пароль </label>
-            <input type="text" asp-for="OldPassword" />
-        </div>
-        <div>
-            <label asp-for="NewPassword"> Новый пароль </label>
-            <input type="text" asp-for="NewPassword" />
-        </div>
-        <div>
-            <input id="change__password" type="button" value="Сохранить" />
-        </div>
-    </form>
+    <div align="left">
+        <h2> Основная информамация </h2>
+        <p>
+            Имя: @Model.firstName
+        </p>
+        <p>
+            Фамилия: @Model.lastName
+        </p>
+        <p>
+            Дата рождения: @Model.BirthDate.ToString("d")
+        </p>
+        <p>
+            Почта: @Model.Email
+        </p>
+        <p>
+            Номер телефона: @Model.PhoneNumber
+        </p>
+    </div>
+
+    <div align="center">
+        <h2>Изменение пароля для пользователя @Model.firstName</h2>
+        <form id="change__password__form">
+            <div>
+                <input class="input__style" name="OldPassword" type="text" placeholder="Старый пароль" />
+            </div>
+            <div>
+                <input class="input__style" name="NewPassword" type="text" placeholder="Новый пароль" />
+            </div>
+            <div>
+                <input class="button" id="button__change__password" type="button" value="Сохранить" />
+            </div>
+        </form>
+        <h2>Изменение почты @Model.Email</h2>
+        <form id="change__email__form">
+            <div>
+                <input class="input__style" name="newEmail" type="text" placeholder="Новая почта" />
+            </div>
+            <div>
+                <input class="button" id="button__change__email" type="button" value="Сохранить" />
+            </div>
+        </form>
+    </div>
 </div>
 
 <div id="element_to_pop_up">
@@ -29,14 +57,10 @@
 
 
 <script>
-    $('#change__password').unbind("click").click(function () {
+    $('#button__change__password').unbind("click").click(function () {
         $.ajax({
             url: '@Url.Action("ChangePassword")',
-            data: {
-                // TODO: сериализовать форму
-                'OldPassword': 'admin',
-                'NewPassword': 'ad'
-            },
+            data: $('#change__password__form').serialize(),
             type: 'POST'
         }).done(function (boolResult) {
             if (boolResult) {

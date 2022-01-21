@@ -60,22 +60,25 @@ namespace BilliardClub.Controllers
         public async Task<IActionResult> _AccountSettings()
         {
             var user = await _userManager.GetUserAsync(User);
-            var model = new ChangePasswordViewModel()
-            {
-                Email = user.Email
-            };
-            return PartialView(model);
+            return PartialView(user);
         }
 
         [HttpPost]
-        public async Task<bool> ChangePassword(ChangePasswordViewModel model)
+        public async Task<bool> ChangePassword(string OldPassword, string NewPassword)
         {
             var user = await _userManager.GetUserAsync(User);
             IdentityResult result =
-                await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                await _userManager.ChangePasswordAsync(user, OldPassword, NewPassword);
             return result.Succeeded;
         }
-        
+
+        public async Task ChangeEmail(string newEmail)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            user.Email = newEmail;
+            await _context.SaveChangesAsync();
+        }
+
         [HttpPost]
         public void DeleteTableInCart(int id)
         {

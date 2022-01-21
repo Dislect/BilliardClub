@@ -314,4 +314,7 @@ header {
     text-align: center;
 }
 
+.account__settings__block p {
+    font-size: 20px;
+}
 /*    Reservation     */

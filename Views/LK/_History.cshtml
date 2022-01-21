@@ -25,6 +25,10 @@
                                 <p>Стол №@poolTable.name</p> 
                             }
                         }
+                        else
+                        {
+                            <p>-</p>
+                        }
                     </td>
                     <td>
                         @if (order.restaurantMenu.Count != 0)
@@ -34,8 +38,12 @@
                                 <p>@restaurantMenu.title</p> 
                             }
                         }
+                        else
+                        {
+                            <p>-</p>
+                        }
                     </td>
-                    <td> @order.cheque </td>
+                    <td> @order.cheque руб.</td>
                 </tr>
             }
             </tbody>

@@ -13,6 +13,7 @@ namespace BilliardClub.Models.Initialization
         {
             string adminEmail = "admin";
             string password = "admin";
+            string adminName = "Админ";
             if (await roleManager.FindByNameAsync("employee") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("employee"));
@@ -25,7 +26,7 @@ namespace BilliardClub.Models.Initialization
 
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
-                User admin = new User { Email = adminEmail, UserName = adminEmail };
+                User admin = new User { Email = adminEmail, UserName = adminEmail, firstName = adminName};
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {

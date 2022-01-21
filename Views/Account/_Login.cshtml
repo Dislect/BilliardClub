@@ -34,8 +34,6 @@
 <script>
     $('#href_to_registr').click(function(event) {
         event.preventDefault();
-        $('main').load("@Url.Action("_Register")", function() {
-            $('main').show('medium');
-        });
+        $('main').load("@Url.Action("_Register")");
     });
 </script>
