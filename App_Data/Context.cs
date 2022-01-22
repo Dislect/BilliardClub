@@ -11,7 +11,7 @@ namespace BilliardClub.App_Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<PoolTable> PoolTables { get; set; }
-        public DbSet<RestaurantMenu> RestaurantMenus { get; set; }
+        public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<StatusTable> StatusTables { get; set; }
         public DbSet<TableRotation> TableRotations { get; set; }

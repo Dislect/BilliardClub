@@ -23,7 +23,8 @@
 
             pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
-            if (Model.cart.CartItems.Exists(x => x.PoolTable.id == poolTable.id 
+            if (Model.cart.CartItems.Exists(x => x.PoolTable != null
+                                                 && x.PoolTable.id == poolTable.id
                                                  && Model.cart.cartId == x.cartItemId))
             {
                 <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inMyCart">

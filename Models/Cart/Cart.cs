@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
@@ -59,14 +58,14 @@ namespace BilliardClub.Models
             return deleteTableInCartTask;
         }
 
-        public void AddToCartProduct(RestaurantMenu product)
+        public async Task AddToCartProduct(FoodItem product)
         {
             _context.CartItems.Add(new CartItem()
             {
                 cartItemId = cartId,
-                RestaurantMenu = product
+                FoodItem = product
             });
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public void DeleteTableInCart(PoolTable table)
@@ -77,9 +76,9 @@ namespace BilliardClub.Models
             _context.SaveChanges();
         }
 
-        public void DeleteProductInCart(RestaurantMenu restaurantMenu)
+        public void DeleteProductInCart(FoodItem foodItem)
         {
-            _context.CartItems.Remove(CartItems.First(x => x.id == restaurantMenu.id));
+            _context.CartItems.Remove(CartItems.First(x => x.FoodItem.id == foodItem.id));
             _context.SaveChanges();
         }
 
@@ -98,7 +97,7 @@ namespace BilliardClub.Models
         {
             return await _context.CartItems.Where(item => item.cartItemId == cartId)
                 .Include(x => x.PoolTable).ThenInclude(x => x.typeTable)
-                .Include(x => x.RestaurantMenu).ToListAsync();
+                .Include(x => x.FoodItem).ToListAsync();
         }
     }
 }

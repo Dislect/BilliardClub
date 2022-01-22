@@ -37,7 +37,7 @@ namespace BilliardClub.Controllers
         [HttpPost]
         public async Task AddToCartTable(int id)
         {
-            if (!_cart.CartItems.Exists(x => x.PoolTable.id == id))
+            if (!_cart.CartItems.Exists(x => x.PoolTable != null && x.PoolTable.id == id))
             {
                 var table = _context.PoolTables.FirstOrDefault(x => x.id == id);
                 await _cart.AddToCartTable(table);

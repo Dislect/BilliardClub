@@ -1,4 +1,4 @@
-﻿@model List<BilliardClub.Models.RestaurantMenu>
+﻿@model List<BilliardClub.Models.FoodItem>
 
 <link rel="stylesheet" href="~/css/catalog.css" type="text/css">
 
@@ -7,11 +7,10 @@
     {
         <div class="product-wrap">
             <div class="product-item">
-                @* TODO: добавить в бд столбец *@
-                <input type="hidden" value="@item.id" />
-                <img src="https://st.depositphotos.com/1003272/1632/i/600/depositphotos_16322913-stock-photo-red-apple.jpg">
+                <img src="@item.picturePath">
                 <div class="product-buttons">
                     <a href="" class="cart_button">В корзину</a>
+                    <input type="hidden" value="@item.id" />
                 </div>
             </div>
             <div class="product-title">
@@ -22,9 +21,84 @@
     }
 </div>
 
+<div id="element_to_pop_up">
+    <span class="button b-close">
+        <span>X</span>
+    </span>
+    <div class="center">
+        <h2 id="number_table"></h2>
+    </div>
+    <div class="center">
+        <button id="button__reserve"> </button>
+    </div>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="~/js/jquery.bpopup.min.js"></script>
 
 <script>
-    @* TODO: добавить скрипт добавления в корзину *@
+    $('.cart_button').unbind("click").click(function (event) {
+        event.preventDefault();
+        var productId = $(this).parent().find('input[type="hidden"]').val();
+        CheckCartOnThisItem(productId);
+    });
+
+    function CheckCartOnThisItem(productId) {
+        $.ajax({
+            url: '@Url.Action("CheckCartOnThisItem")',
+            type: 'GET',
+            data: { productId: productId }
+        }).done(function(result) {
+            if (result) {
+                ShowErrorMessage();
+            } else {
+                Reservation(productId);
+            }
+        });
+    }
+
+    function ShowErrorMessage() {
+        $('#element_to_pop_up').bPopup({
+            fadeSpeed: 'slow',
+            followSpeed: 1500,
+            onOpen: function() {
+                $(this).css('width', '700px');
+                $('#number_table').html('Вы уже добавли данный товар в корзину.' +
+                    '</br> <br/> Вы можете заказать что-нибудь другое или увеличить кол-во позиций данного товара в личном кабинете.');
+                $('#button__reserve').css({
+                    'margin-top': '15px',
+                    'padding': '5px',
+                    'height': 'auto'
+                }).text('Перейти в личный кабинет').click(function() {
+                    window.location.href = '@Url.Action("Info", "LK")';
+                });
+            }
+        });
+    }
+
+    function Reservation(productId) {
+        $.ajax({
+            url: '@Url.Action("AddToCartProduct")',
+            data: { productId: productId },
+            type: 'POST',
+            beforeSend: function() {
+                $('#element_to_pop_up').bPopup({
+                    fadeSpeed: 'slow',
+                    followSpeed: 1500,
+                    onOpen: function() {
+                        $('#number_table').html('Товар добавлен в корзину!' +
+                            '</br> </br> Вы можете подтвердить заказ в личном кабинете, или выбрать что-то еще.');
+                        $('#button__reserve').css({
+                            'margin-top': '15px',
+                            'padding': '5px',
+                            'height': 'auto'
+                        }).text('Перейти в личный кабинет').click(function() {
+                            window.location.href = '@Url.Action("Info", "LK")';
+                        });
+                    }
+                });
+            }
+        });
+    }
+
 </script>

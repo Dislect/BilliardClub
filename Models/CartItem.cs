@@ -9,7 +9,7 @@ namespace BilliardClub.Models
     {
         public int id { get; set; }
         public PoolTable PoolTable { get; set; }
-        public RestaurantMenu RestaurantMenu { get; set; }
+        public FoodItem FoodItem { get; set; }
         public string cartItemId { get; set; }
     }
 }

@@ -178,19 +178,19 @@ input[type=number]::-webkit-outer-spin-button {
     height: 50%;
 }
 
-.remove__tr {
-    color: #fff; 
+.remove__tr__table, .remove__tr__product {
+    color: #fff;
     user-select: none;
-    background: #292929; 
+    background: #292929;
     border-radius: 20px;
-    padding: .7em 1.5em; 
+    padding: .7em 1.5em;
 }
 
-    .remove__tr:hover {
+    .remove__tr__table, .remove__tr__product:hover {
         background: black;
     }
 
-    .remove__tr:active {
+    .remove__tr__table, .remove__tr__product:active {
         background: black;
     }
 

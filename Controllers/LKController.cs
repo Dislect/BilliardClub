@@ -86,6 +86,13 @@ namespace BilliardClub.Controllers
             _cart.DeleteTableInCart(table);
         }
 
+        [HttpPost]
+        public void DeleteProductInCart(int id)
+        {
+            var foodItem = _context.FoodItems.FirstOrDefault(x => x.id == id);
+            _cart.DeleteProductInCart(foodItem);
+        }
+
         public void DeleteAllItemsInCart()
         {
             _cart.DeleteAllItemsInCart();
@@ -96,7 +103,7 @@ namespace BilliardClub.Controllers
         {
             var order = new Order() {orderDate = DateTime.Now, cheque = cheque, user = await _userManager.GetUserAsync(User)};
             var tables = _cart.CartItems.Where(x => x.PoolTable != null).Select(x => x.PoolTable).ToList();
-            var products = _cart.CartItems.Where(x => x.RestaurantMenu != null).Select(x => x.RestaurantMenu).ToList();
+            var products = _cart.CartItems.Where(x => x.FoodItem != null).Select(x => x.FoodItem).ToList();
             order.poolTables.AddRange(tables);
             order.restaurantMenu.AddRange(products);
             _context.Orders.Add(order);
@@ -105,5 +112,3 @@ namespace BilliardClub.Controllers
         }
     }
 }
-
-// TODO: таблицу order привязать к user + cart (cart_id)

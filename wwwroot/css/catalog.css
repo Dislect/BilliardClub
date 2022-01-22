@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+main {
+    min-height: 84vh;
+}
+
 .container__catalog {
     min-height: auto;
     width: 137vh;
@@ -31,7 +35,8 @@
 
 .product-wrap img {
     display: block;
-    width: 100%;
+    width: 296px;
+    height: 296px;
 }
 
 .product-buttons {
