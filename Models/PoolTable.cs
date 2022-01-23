@@ -12,7 +12,7 @@ namespace BilliardClub.Models
         public int? idTableRotation { get; set; }
         public TypeTable typeTable { get; set; }
         public TableRotation tableRotation { get; set; }
-        public List<Order> orders { get; set; } = new();
+        public List<OrderPoolTable> orders { get; set; } = new();
         public List<StatusTable> statusTables { get; set; } = new();
     }
 }

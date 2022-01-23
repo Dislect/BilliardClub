@@ -8,6 +8,6 @@ namespace BilliardClub.Models
         public string title { get; set; }
         public uint price { get; set; }
         public string picturePath { get; set; }
-        public List<Order> orders { get; set; } = new();
+        public List<OrderFoodItem> orders { get; set; } = new();
     }
 }

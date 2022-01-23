@@ -28,7 +28,8 @@
                                     <td>  <span class="price">@item.PoolTable.typeTable.price</span> рублей/час </td>
                                     <td>
                                         <div class="quantity">
-                                            <input type="number" min="1" max="6" step="1" value="1" readonly style="user-select: none">
+                                            <input type="hidden" value="@item.id"/>
+                                            <input type="number" min="1" max="6" step="1" value="@item.quantity" readonly style="user-select: none">
                                         </div>
                                     </td>
                                     <td>
@@ -61,7 +62,8 @@
                                     <td>  <span class="price">@item.FoodItem.price</span> рублей </td>
                                     <td>
                                         <div class="quantity">
-                                            <input type="number" min="1" max="15" step="1" value="1" readonly style="user-select: none">
+                                            <input type="hidden" value="@item.id" />
+                                            <input type="number" min="1" max="15" step="1" value="@item.quantity" readonly style="user-select: none">
                                         </div>
                                     </td>
                                     <td>
@@ -113,7 +115,7 @@
     });
 
     $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
-    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input');
+    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[type="number"]');
     $('.quantity').each(function() {
         var spinner = $(this),
             input = spinner.find('input[type="number"]'),
@@ -129,8 +131,8 @@
             } else {
                 var newVal = oldValue + 1;
             }
-            spinner.find("input").val(newVal);
-            spinner.find("input").trigger("change");
+            spinner.find('input[type="number"]').val(newVal);
+            spinner.find('input[type="number"]').trigger("change");
             $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         });
 
@@ -141,8 +143,8 @@
             } else {
                 var newVal = oldValue - 1;
             }
-            spinner.find("input").val(newVal);
-            spinner.find("input").trigger("change");
+            spinner.find('input[type="number"]').val(newVal);
+            spinner.find('input[type="number"]').trigger("change");
             $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         });
     });
@@ -158,7 +160,27 @@
         return sum;
     }
 
+    function UpdateQuantity() {
+        $('.position').each(function () {
+            var quantity = $(this).find('input[type="number"]').val();
+            if (quantity > 1) {
+                var id = $(this).find('input[type="hidden"]').val();
+                $.ajax({
+                    url: '@Url.Action("UpdateQuantity")',
+                    data: {
+                        cartItemId: id,
+                        quantity: quantity
+                    },
+                    type: 'POST'
+                }).done(function () {
+                    console.log('Кол-во обновлено');
+                });
+            }
+        });
+    }
+
     $('#submit__order').unbind("click").click(function () {
+        UpdateQuantity();
         var sum = SumOrderPrice();
         $.ajax({
             url: '@Url.Action("ConfirmOrder")',

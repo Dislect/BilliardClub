@@ -25,7 +25,7 @@
 
             if (Model.cart.CartItems.Exists(x => x.PoolTable != null
                                                  && x.PoolTable.id == poolTable.id
-                                                 && Model.cart.cartId == x.cartItemId))
+                                                 && Model.cart.cartId == x.cartId))
             {
                 <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inMyCart">
                     <p class="numberTable" style="@pStyle">

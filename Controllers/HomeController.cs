@@ -47,7 +47,7 @@ namespace BilliardClub.Controllers
         [HttpGet]
         public bool CheckingNumberTablesInCart()
         {
-            return _cart.CartItems.Count(x => x.PoolTable != null && x.cartItemId == _cart.cartId) < 2;
+            return _cart.CartItems.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < 2;
         }
 
         public async Task<ReservationViewModel> InitModel()

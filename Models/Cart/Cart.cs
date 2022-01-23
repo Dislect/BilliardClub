@@ -42,8 +42,9 @@ namespace BilliardClub.Models
             table.statusTables.Add(statusTables);
             _context.CartItems.Add(new CartItem()
             {
-                cartItemId = cartId,
-                PoolTable = table
+                cartId = cartId,
+                PoolTable = table,
+                quantity = 1
             });
             _context.SaveChanges();
 
@@ -51,7 +52,7 @@ namespace BilliardClub.Models
             var deleteTableInCartTask = Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(60000);
-                _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartItemId));
+                _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
                 _context.StatusTables.Remove(_context.StatusTables.First(x => x.id == statusTables.id));
                 _context.SaveChanges();
             });
@@ -62,15 +63,16 @@ namespace BilliardClub.Models
         {
             _context.CartItems.Add(new CartItem()
             {
-                cartItemId = cartId,
-                FoodItem = product
+                cartId = cartId,
+                FoodItem = product,
+                quantity = 1
             });
             await _context.SaveChangesAsync();
         }
 
         public void DeleteTableInCart(PoolTable table)
         {
-            _context.CartItems.Remove(CartItems.First(x => x.PoolTable.id == table.id));
+            _context.CartItems.Remove(CartItems.First(x => x.PoolTable != null && x.PoolTable.id == table.id));
             _context.StatusTables.Remove(_context.StatusTables.Include(x => x.poolTable).Include(x => x.status)
                 .First(x => x.poolTable.id == table.id && x.status.id == 3));
             _context.SaveChanges();
@@ -95,7 +97,7 @@ namespace BilliardClub.Models
 
         private async Task<List<CartItem>> GetCartItems()
         {
-            return await _context.CartItems.Where(item => item.cartItemId == cartId)
+            return await _context.CartItems.Where(item => item.cartId == cartId)
                 .Include(x => x.PoolTable).ThenInclude(x => x.typeTable)
                 .Include(x => x.FoodItem).ToListAsync();
         }

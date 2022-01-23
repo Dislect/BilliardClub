@@ -9,7 +9,7 @@ namespace BilliardClub.Models
         public DateTime orderDate { get; set; }
         public double cheque { get; set; }
         public User user { get; set; }
-        public List<FoodItem> restaurantMenu { get; set; } = new();
-        public List<PoolTable> poolTables { get; set; } = new();
+        public List<OrderFoodItem> foodItems { get; set; } = new();
+        public List<OrderPoolTable> poolTables { get; set; } = new();
     }
 }
