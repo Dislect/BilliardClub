@@ -187,10 +187,9 @@
             data: { cheque: sum },
             type: 'POST'
         }).done(function () {
-            $('.order__table').hide();
             alert("Заказ подтвержден");
+            $('.content__block2').load("@Url.Action("_Order")");
         });
     });
-
 </script>
 

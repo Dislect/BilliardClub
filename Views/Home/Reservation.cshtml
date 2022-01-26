@@ -34,7 +34,7 @@
                     <input class="id" type="hidden" value="@poolTable.id">
                 </div>
             }
-            else if(poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
+            else if (poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
             {
                 <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inOtherCart">
                     <p class="numberTable" style="@pStyle">
@@ -67,6 +67,42 @@
         <button id="button__reserve"> </button>
     </div>
 </div>
+
+@if (User.IsInRole("employee"))
+{
+    <div id="dialog" title="Изменение">
+        <p>
+            Тип стола: 
+            <select>
+                <option>Русский бильярд</option>
+                <option>Амереканский пул</option>
+            </select>
+        </p>
+        <p>
+            Поворот стола: 
+            <select>
+                <option>0*</option>
+                <option>90*</option>
+            </select>
+        </p>
+        <p>
+            Номер стола:
+            <input type="text" style="width: 100px"/>
+        </p>
+        Изменение расположения:
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100px; margin: auto">
+            <div></div>
+            <div style="user-select: none; cursor: pointer">&#129137;</div>
+            <div></div>
+            <div style="user-select: none; cursor: pointer">&#129136;</div>
+            <div></div>
+            <div style="user-select: none; cursor: pointer">&#129138;</div>
+            <div></div>
+            <div style="user-select: none; cursor: pointer">&#129139;</div>
+            <div></div>
+        </div>
+    </div>
+}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="~/js/jquery.bpopup.min.js"></script>
@@ -177,7 +213,7 @@
                 }
             });
         }
-            
+
         $('.trigger').unbind("click").click(function () {
             CheckingNumberTablesInCart($(this));
         });
@@ -198,6 +234,49 @@ else
                         window.location.href = '@Url.Action("Authorization", "Account")';
                     });
                 }
+            });
+        });
+    </script>
+}
+
+@if (User.IsInRole("employee"))
+{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script>
+        $('.trigger').each(function () {
+            var transform = $(this).find('p').css('transform'),
+                right = '-100px', top = '-50px';
+
+            if (transform.indexOf("-1") >= 0) {
+                right = '105px';
+                top = '-55px';
+            }
+
+            $('<img src="/img/pencil.png" class="change__table"/>').css({
+                'width': '25px',
+                'height': '25px',
+                'position': 'absolute',
+                'background-repeat': 'no-repeat',
+                'background-size': 'contain',
+                'transform': transform,
+                'margin-right': right,
+                'margin-top': top
+            }).insertAfter($(this).find('input[type="hidden"]'));
+
+            var block = $(this),
+                btnChange = block.find('.change__table');
+
+            btnChange.click(function (event) {
+                event.stopPropagation();
+                $("#dialog").dialog({
+                    resizable: 'false',
+                    width: '350px',
+                    minHeight: '800px',
+                    buttons: [{text: "Сохранить", click: function() {
+                        /*TODO: ajax запрос для сохранения*/
+                    }}]
+                });
             });
         });
     </script>

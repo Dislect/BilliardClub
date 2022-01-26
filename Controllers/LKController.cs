@@ -84,10 +84,7 @@ namespace BilliardClub.Controllers
         {
             if (_cart.CartItems.Exists(x => x.id == cartItemId))
             {
-                if (quantity <= 0)
-                    quantity = 1;
-
-                if (quantity > 15)
+                if (quantity <= 0 || quantity > 15)
                     quantity = 1;
 
                 var cartItem = _context.CartItems.First(x => x.cartId == _cart.cartId && x.id == cartItemId);
@@ -122,7 +119,7 @@ namespace BilliardClub.Controllers
         public async Task ConfirmOrder(double cheque)
         {
             var order = new Order() {orderDate = DateTime.Now, cheque = cheque, user = await _userManager.GetUserAsync(User)};
-            var tablesInCart = _cart.CartItems.Where(x => x.PoolTable != null).ToList();
+            var tablesInCart =  _cart.CartItems.Where(x => x.PoolTable != null).ToList();
             var productsInCart = _cart.CartItems.Where(x => x.FoodItem != null).ToList();
 
             if (tablesInCart.Count != 0)

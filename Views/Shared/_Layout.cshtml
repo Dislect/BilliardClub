@@ -30,6 +30,10 @@
                 }
                 else
                 {
+                    if (User.IsInRole("employee"))
+                    {
+                        <li> <a asp-controller="Management" asp-action="Сontrol"><span class="menu__link"> Администрирование </span> </a> </li>
+                    }
                     <li> <a asp-controller="LK" asp-action="Info"><span class="menu__link"> Личный кабинет </span> </a> </li>
                     <li> <a asp-controller="Account" asp-action="Logout"><span class="menu__link"> Выйти </span> </a> </li>
                 }
