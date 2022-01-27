@@ -7,5 +7,7 @@ namespace BilliardClub.View_Models
     {
         public Cart cart { get; set; }
         public List<PoolTable> poolTables { get; set; }
+        public List<TypeTable> typeTables { get; set; }
+        public List<TableRotation> tableRotations { get; set; }
     }
 }

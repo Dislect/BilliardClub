@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
 using BilliardClub.View_Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,27 @@ namespace BilliardClub.Controllers
             return _cart.CartItems.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < 2;
         }
 
+        [HttpGet]
+        public PoolTable GetTableInfo(int tableId)
+        {
+            var table = _context.PoolTables.First(x => x.id == tableId);
+            table.idTableRotation = _context.TableRotations.First(x => x.poolTables.Contains(table)).id;
+            table.idTypeTable = _context.TypeTables.First(x => x.poolTables.Contains(table)).id;
+            return table;
+        }
+
+        [HttpPost]
+        public void UpdatePoolTable(int tableId, int typeId, int rotationId, string number, int tableX, int tableY)
+        {
+            var table = _context.PoolTables.First(x => x.id == tableId);
+            table.tableRotation = _context.TableRotations.First(x => x.id == rotationId);
+            table.typeTable = _context.TypeTables.First(x => x.id == typeId);
+            table.name = number;
+            table.tableX = tableX;
+            table.tableY = tableY;
+            _context.SaveChanges();
+        }
+
         public async Task<ReservationViewModel> InitModel()
         {
             var model = new ReservationViewModel()
@@ -58,7 +80,9 @@ namespace BilliardClub.Controllers
                 poolTables = await _context.PoolTables
                     .Include(x => x.statusTables).ThenInclude(x => x.status)
                     .Include(x => x.typeTable)
-                    .Include(x => x.tableRotation).ToListAsync()
+                    .Include(x => x.tableRotation).ToListAsync(),
+                typeTables = await  _context.TypeTables.ToListAsync(),
+                tableRotations = await _context.TableRotations.ToListAsync()
             };
             return model;
         }

@@ -46,7 +46,11 @@ namespace BilliardClub
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sp => Cart.GetCart(sp));
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+
+            services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             services.AddMemoryCache();
             services.AddSession();
         }

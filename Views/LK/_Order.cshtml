@@ -115,7 +115,7 @@
     });
 
     $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
-    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[type="number"]');
+    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[typeId="number"]');
     $('.quantity').each(function() {
         var spinner = $(this),
             input = spinner.find('input[type="number"]'),
@@ -132,7 +132,6 @@
                 var newVal = oldValue + 1;
             }
             spinner.find('input[type="number"]').val(newVal);
-            spinner.find('input[type="number"]').trigger("change");
             $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         });
 
@@ -144,7 +143,6 @@
                 var newVal = oldValue - 1;
             }
             spinner.find('input[type="number"]').val(newVal);
-            spinner.find('input[type="number"]').trigger("change");
             $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         });
     });
@@ -172,8 +170,6 @@
                         quantity: quantity
                     },
                     type: 'POST'
-                }).done(function () {
-                    console.log('Кол-во обновлено');
                 });
             }
         });

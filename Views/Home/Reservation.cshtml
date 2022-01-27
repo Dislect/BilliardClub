@@ -72,35 +72,51 @@
 {
     <div id="dialog" title="Изменение">
         <p>
-            Тип стола: 
-            <select>
-                <option>Русский бильярд</option>
-                <option>Амереканский пул</option>
+            id стола: 
+            <span name="tableId" id="tableId"></span>
+        </p>
+        <p>
+            Тип стола:
+            <select name="typeId" id="typeId">
+                @foreach (var type in Model.typeTables)
+                {
+                    <option value="@type.id">@type.name</option>
+                }
             </select>
         </p>
         <p>
-            Поворот стола: 
-            <select>
-                <option>0*</option>
-                <option>90*</option>
+            Поворот стола:
+            <select name="rotationId" id="rotationId">
+                @foreach (var rotation in Model.tableRotations)
+                {
+                    <option value="@rotation.id">@rotation.rotationAngle</option>
+                }
             </select>
         </p>
         <p>
             Номер стола:
-            <input type="text" style="width: 100px"/>
+            <input name="number" id="number" type="text" style="width: 100px"/>
         </p>
         Изменение расположения:
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100px; margin: auto">
             <div></div>
-            <div style="user-select: none; cursor: pointer">&#129137;</div>
+            <div id="up" style="user-select: none; cursor: pointer">&#129137;</div>
             <div></div>
-            <div style="user-select: none; cursor: pointer">&#129136;</div>
+            <div id="left" style="user-select: none; cursor: pointer">&#129136;</div>
             <div></div>
-            <div style="user-select: none; cursor: pointer">&#129138;</div>
+            <div id="right" style="user-select: none; cursor: pointer">&#129138;</div>
             <div></div>
-            <div style="user-select: none; cursor: pointer">&#129139;</div>
+            <div id="down" style="user-select: none; cursor: pointer">&#129139;</div>
             <div></div>
         </div>
+        <p>
+            tableX:
+            <input name="tableX" id="tableX" type="number" style="width: 100px"/>
+        </p>
+        <p>
+            tableY:
+            <input name="tableY" id="tableY" type="number" style="width: 100px"/>
+        </p>
     </div>
 }
 
@@ -244,9 +260,72 @@ else
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
+        function ChangeDialog(id)
+        {
+            $.ajax({
+                url: '@Url.Action("GetTableInfo")',
+                data: {tableId: id},
+                type: 'GET'
+            }).done(function (table) {
+                $('#tableId').text(table.id);
+                $('#typeId option[value="'+ table.idTypeTable +'"]').prop('selected', true);
+                $('#rotationId option[value="'+ table.idTableRotation +'"]').prop('selected', true);
+                $('#number').val(table.name);
+                $('#tableX').val(table.tableX);
+                $('#tableY').val(table.tableY);
+            });
+        }
+
+        $('#up').click(function () {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableY').val(),
+                newValue = --oldValue;
+            tableblock.css('margin-top', newValue + 'px');
+            $('#tableY').val(newValue);
+        });
+
+        $('#down').click(function () {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableY').val(),
+                newValue = ++oldValue;
+            tableblock.css('margin-top', newValue + 'px');
+            $('#tableY').val(newValue);
+        });
+
+        $('#left').click(function () {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableX').val(),
+                newValue = --oldValue;
+            tableblock.css('margin-left', newValue + 'px');
+            $('#tableX').val(newValue);
+        });
+
+        $('#right').click(function () {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableX').val(),
+                newValue = ++oldValue;
+            tableblock.css('margin-left', newValue + 'px');
+            $('#tableX').val(newValue);
+        });
+
+        $('#tableX').change(function() {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableX').val();
+            tableblock.css('margin-left', oldValue + 'px');
+        });
+
+        $('#tableY').change(function() {
+            var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
+                oldValue = $('#tableY').val();
+            tableblock.css('margin-top', oldValue + 'px');
+        });
+
         $('.trigger').each(function () {
-            var transform = $(this).find('p').css('transform'),
-                right = '-100px', top = '-50px';
+
+            var tableblock = $(this),
+                transform = tableblock.find('p').css('transform'),
+                right = '-100px',
+                top = '-50px';
 
             if (transform.indexOf("-1") >= 0) {
                 right = '105px';
@@ -262,20 +341,35 @@ else
                 'transform': transform,
                 'margin-right': right,
                 'margin-top': top
-            }).insertAfter($(this).find('input[type="hidden"]'));
+            }).insertAfter(tableblock.find('input[type="hidden"]'));
 
-            var block = $(this),
-                btnChange = block.find('.change__table');
+            var btnChange = tableblock.find('.change__table');
 
             btnChange.click(function (event) {
                 event.stopPropagation();
+                ChangeDialog(tableblock.find('.id').val());
                 $("#dialog").dialog({
                     resizable: 'false',
                     width: '350px',
                     minHeight: '800px',
-                    buttons: [{text: "Сохранить", click: function() {
-                        /*TODO: ajax запрос для сохранения*/
-                    }}]
+                    buttons: [{
+                        text: "Сохранить", click: function () {
+                            $.ajax({
+                                url: '@Url.Action("UpdatePoolTable")',
+                                data: {
+                                    'tableId': $('#tableId').text(),
+                                    'typeId': $('#typeId ').val(),
+                                    'rotationId': $('#rotationId ').val(),
+                                    'number': $('#number ').val(),
+                                    'tableX': $('#tableX ').val(),
+                                    'tableY': $('#tableY ').val()
+                                },
+                                type: 'POST'
+                            }).done(function () {
+                                $('#dialog').dialog("close");
+                            });
+                        }
+                    }]
                 });
             });
         });
