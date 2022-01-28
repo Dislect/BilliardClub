@@ -115,7 +115,7 @@
     });
 
     $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
-    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[typeId="number"]');
+    $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[type="number"]');
     $('.quantity').each(function() {
         var spinner = $(this),
             input = spinner.find('input[type="number"]'),
@@ -177,13 +177,14 @@
 
     $('#submit__order').unbind("click").click(function () {
         UpdateQuantity();
-        var sum = SumOrderPrice();
+        $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         $.ajax({
             url: '@Url.Action("ConfirmOrder")',
-            data: { cheque: sum },
-            type: 'POST'
-        }).done(function () {
-            alert("Заказ подтвержден");
+            type: 'POST',
+            beforeSend: function() {
+                alert("Заказ подтвержден");
+            }
+        }).done(function() {
             $('.content__block2').load("@Url.Action("_Order")");
         });
     });

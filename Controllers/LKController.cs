@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
@@ -80,16 +81,19 @@ namespace BilliardClub.Controllers
         }
 
         [HttpPost]
-        public void UpdateQuantity(int cartItemId, uint quantity)
+        public async Task UpdateQuantity(int cartItemId, uint quantity)
         {
             if (_cart.CartItems.Exists(x => x.id == cartItemId))
             {
-                if (quantity <= 0 || quantity > 15)
+                if (quantity <= 0)
                     quantity = 1;
+
+                if (quantity >= 15)
+                    quantity = 15;
 
                 var cartItem = _context.CartItems.First(x => x.cartId == _cart.cartId && x.id == cartItemId);
                 cartItem.quantity = quantity;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -110,45 +114,60 @@ namespace BilliardClub.Controllers
             _cart.DeleteProductInCart(foodItem);
         }
 
-        public void DeleteAllItemsInCart()
-        {
-            _cart.DeleteAllItemsInCart();
-        }
-
         [HttpPost]
-        public async Task ConfirmOrder(double cheque)
+        public async Task ConfirmOrder()
         {
-            var order = new Order() {orderDate = DateTime.Now, cheque = cheque, user = await _userManager.GetUserAsync(User)};
-            var tablesInCart =  _cart.CartItems.Where(x => x.PoolTable != null).ToList();
-            var productsInCart = _cart.CartItems.Where(x => x.FoodItem != null).ToList();
-
-            if (tablesInCart.Count != 0)
+            if (_cart.CartItems.Count != 0)
             {
-                foreach (var tableInCart in tablesInCart)
+                double cheque = 0;
+                var order = new Order() { orderDate = DateTime.Now, user = await _userManager.GetUserAsync(User) };
+                var tablesInCart = _cart.CartItems.Where(x => x.PoolTable != null).ToList();
+                var productsInCart = _cart.CartItems.Where(x => x.FoodItem != null).ToList();
+                
+                if (tablesInCart.Count != 0)
                 {
-                    order.poolTables.Add(new OrderPoolTable()
-                    {
-                        poolTable = tableInCart.PoolTable,
-                        quantity = tableInCart.quantity
-                    });
-                }
-            }
+                    var statusReserve = _context.Status.First(x => x.name == "Забронирован");
 
-            if (productsInCart.Count != 0)
-            {
-                foreach (var productInCart in productsInCart)
+                    foreach (var tableInCart in tablesInCart)
+                    {
+                        cheque += tableInCart.quantity * tableInCart.PoolTable.typeTable.price;
+
+                        if (tableInCart.PoolTable.statusTables.Count != 0)
+                        {
+                            tableInCart.PoolTable.statusTables.Last().dateEnd = DateTime.Now;
+                        }
+
+                        tableInCart.PoolTable.statusTables.Add(new StatusTable()
+                            {dateStart = DateTime.Now ,dateEnd = DateTime.Now.AddHours(tableInCart.quantity), status = statusReserve});
+
+                        order.poolTables.Add(new OrderPoolTable()
+                        {
+                            poolTable = tableInCart.PoolTable,
+                            quantity = tableInCart.quantity
+                        });
+                    }
+                }
+
+                if (productsInCart.Count != 0)
                 {
-                    order.foodItems.Add(new OrderFoodItem()
+                    foreach (var productInCart in productsInCart)
                     {
-                        foodItem = productInCart.FoodItem,
-                        quantity = productInCart.quantity
-                    });
-                }
-            }
+                        cheque += productInCart.quantity * productInCart.FoodItem.price;
 
-            _context.Orders.Add(order);
-            _cart.DeleteAllItemsInCart();
-            await _context.SaveChangesAsync();
+                        order.foodItems.Add(new OrderFoodItem()
+                        {
+                            foodItem = productInCart.FoodItem,
+                            quantity = productInCart.quantity
+                        });
+                    }
+                }
+
+                order.cheque = cheque;
+                _context.Orders.Add(order);
+                _cart.DeleteAllItemsInCart();
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

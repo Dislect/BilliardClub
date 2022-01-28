@@ -3,9 +3,6 @@
 @{
     string divStyle;
     string pStyle;
-    string trclass = "trigger";
-    string inMyCart = "inMyCart";
-    string inOtherCart = "inOtherCart";
     Dictionary<string, string> cssStyle = new Dictionary<string, string>()
     {
         ["Русский бильярд"] = "rusb",
@@ -27,16 +24,25 @@
                                                  && x.PoolTable.id == poolTable.id
                                                  && Model.cart.cartId == x.cartId))
             {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inMyCart">
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger inMyCart">
                     <p class="numberTable" style="@pStyle">
                         @poolTable.name
                     </p>
                     <input class="id" type="hidden" value="@poolTable.id">
                 </div>
             }
-            else if (poolTable.statusTables.Exists(x => x.status.name == "В корзине"))
+            else if (poolTable.statusTables.Count != 0 && poolTable.statusTables.Last().status.name == "В корзине")
             {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass @inOtherCart">
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger inOtherCart">
+                    <p class="numberTable" style="@pStyle">
+                        @poolTable.name
+                    </p>
+                    <input class="id" type="hidden" value="@poolTable.id">
+                </div>
+            }
+            else if (poolTable.statusTables.Count != 0 && poolTable.statusTables.Last().status.name == "Забронирован")
+            {
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger reserved">
                     <p class="numberTable" style="@pStyle">
                         @poolTable.name
                     </p>
@@ -45,7 +51,7 @@
             }
             else
             {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] @trclass">
+                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger">
                     <p class="numberTable" style="@pStyle">
                         @poolTable.name
                     </p>
@@ -73,11 +79,11 @@
     <div id="dialog" title="Изменение">
         <p>
             id стола: 
-            <span name="tableId" id="tableId"></span>
+            <span id="tableId"></span>
         </p>
         <p>
             Тип стола:
-            <select name="typeId" id="typeId">
+            <select id="typeId">
                 @foreach (var type in Model.typeTables)
                 {
                     <option value="@type.id">@type.name</option>
@@ -86,7 +92,7 @@
         </p>
         <p>
             Поворот стола:
-            <select name="rotationId" id="rotationId">
+            <select id="rotationId">
                 @foreach (var rotation in Model.tableRotations)
                 {
                     <option value="@rotation.id">@rotation.rotationAngle</option>
@@ -95,7 +101,7 @@
         </p>
         <p>
             Номер стола:
-            <input name="number" id="number" type="text" style="width: 100px"/>
+            <input id="number" type="text" style="width: 100px"/>
         </p>
         Изменение расположения:
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100px; margin: auto">
@@ -111,11 +117,11 @@
         </div>
         <p>
             tableX:
-            <input name="tableX" id="tableX" type="number" style="width: 100px"/>
+            <input id="tableX" type="number" style="width: 100px"/>
         </p>
         <p>
             tableY:
-            <input name="tableY" id="tableY" type="number" style="width: 100px"/>
+            <input id="tableY" type="number" style="width: 100px"/>
         </p>
     </div>
 }
@@ -211,6 +217,19 @@
             });
         }
 
+        function ShowMessageReserved() {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                autoClose: 2500,
+                onOpen: function () {
+                    $(this).css('width', '400px');
+                    $('#number_table').html('В данный момент этот стол забронирован. <br/> <br/> Пожалуйста, выберите другой стол.');
+                    $('#button__reserve').hide();
+                }
+            });
+        }
+
         function CheckingNumberTablesInCart(item) {
             $.ajax({
                 url: '@Url.Action("CheckingNumberTablesInCart")',
@@ -221,6 +240,8 @@
                         ShowMessageInMyCart();
                     } else if (item.hasClass("inOtherCart")) {
                         ShowMessageInOtherCart();
+                    } else if (item.hasClass("reserved")) {
+                        ShowMessageReserved();
                     } else {
                         ShowReservation(item);
                     }
@@ -358,11 +379,11 @@ else
                                 url: '@Url.Action("UpdatePoolTable")',
                                 data: {
                                     'tableId': $('#tableId').text(),
-                                    'typeId': $('#typeId ').val(),
-                                    'rotationId': $('#rotationId ').val(),
-                                    'number': $('#number ').val(),
-                                    'tableX': $('#tableX ').val(),
-                                    'tableY': $('#tableY ').val()
+                                    'typeId': $('#typeId').val(),
+                                    'rotationId': $('#rotationId').val(),
+                                    'number': $('#number').val(),
+                                    'tableX': $('#tableX').val(),
+                                    'tableY': $('#tableY').val()
                                 },
                                 type: 'POST'
                             }).done(function () {

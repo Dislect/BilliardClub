@@ -37,9 +37,12 @@ namespace BilliardClub.Models
 
         public Task AddToCartTable(PoolTable table)
         {
-            var statusInCart = _context.Status.FirstOrDefault(x => x.id == 3); // "3 = В корзине"
-            var statusTables = new StatusTable() { dateStart = DateTime.Now, status = statusInCart };
-            table.statusTables.Add(statusTables);
+            var statusInCart = _context.Status.FirstOrDefault(x => x.name == "В корзине");
+            if (table.statusTables.Count != 0)
+            {
+                table.statusTables.Last().dateEnd = DateTime.Now;
+            }
+            table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusInCart });
             _context.CartItems.Add(new CartItem()
             {
                 cartId = cartId,
@@ -48,12 +51,20 @@ namespace BilliardClub.Models
             });
             _context.SaveChanges();
 
-            // удаление стола из корзины через некоторое время
+            // удаление стола из корзины через некоторое время и обновление статуса стола
             var deleteTableInCartTask = Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(60000);
-                _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
-                _context.StatusTables.Remove(_context.StatusTables.First(x => x.id == statusTables.id));
+                if (_context.CartItems.Include(x => x.PoolTable).ToList().Exists(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
+                {
+                    _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
+                }
+                var statusFree = _context.Status.First(x => x.name == "Свободен");
+                if (table.statusTables.Count != 0)
+                {
+                    table.statusTables.Last().dateEnd = DateTime.Now;
+                }
+                table.statusTables.Add(new StatusTable(){dateStart = DateTime.Now, status = statusFree});
                 _context.SaveChanges();
             });
             return deleteTableInCartTask;
@@ -73,8 +84,12 @@ namespace BilliardClub.Models
         public void DeleteTableInCart(PoolTable table)
         {
             _context.CartItems.Remove(CartItems.First(x => x.PoolTable != null && x.PoolTable.id == table.id));
-            _context.StatusTables.Remove(_context.StatusTables.Include(x => x.poolTable).Include(x => x.status)
-                .First(x => x.poolTable.id == table.id && x.status.id == 3));
+            var statusFree = _context.Status.First(x => x.name == "Свободен");
+            if (table.statusTables.Count != 0)
+            {
+                table.statusTables.Last().dateEnd = DateTime.Now;
+            }
+            table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusFree });
             _context.SaveChanges();
         }
 
@@ -86,11 +101,6 @@ namespace BilliardClub.Models
 
         public void DeleteAllItemsInCart()
         {
-            var tables = cart.CartItems.Where(x => x.PoolTable != null).Select(x => x.PoolTable).ToList();
-            foreach (var table in tables)
-            {
-                DeleteTableInCart(table);
-            }
             _context.CartItems.RemoveRange(CartItems);
             _context.SaveChanges();
         }

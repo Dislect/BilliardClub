@@ -39,7 +39,7 @@
 <script>
     $('.cart_button').unbind("click").click(function (event) {
         event.preventDefault();
-        var productId = $(this).parent().find('input[typeId="hidden"]').val();
+        var productId = $(this).parent().find('input[type="hidden"]').val();
         CheckCartOnThisItem(productId);
     });
 
