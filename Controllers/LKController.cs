@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BilliardClub.Controllers
 {
-    [Authorize(Roles = "user,employee")]
+    [Authorize]
     public class LKController : Controller
     {
         private readonly Context _context;
@@ -31,11 +31,7 @@ namespace BilliardClub.Controllers
         [HttpGet]
         public ActionResult Info()
         {
-            LKViewModel viewModel = new()
-            {
-                CartItems = _cart.CartItems
-            };
-            return View(viewModel);
+            return View(_cart.CartItems);
         }
 
         [HttpGet]

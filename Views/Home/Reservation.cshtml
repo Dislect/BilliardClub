@@ -1,5 +1,4 @@
-﻿@using System.Text
-@model BilliardClub.View_Models.ReservationViewModel
+﻿@model BilliardClub.View_Models.ReservationViewModel
 @{
     string divStyle;
     string pStyle;
@@ -9,6 +8,12 @@
         ["Амереканский пул"] = "poolb"
     };
 }
+
+<style>
+    body {
+        min-width: 1600px;
+    }
+</style>
 
 <div class="content__reservation">
     <div class="plan">
@@ -76,7 +81,7 @@
 
 @if (User.IsInRole("employee"))
 {
-    <div id="dialog" title="Изменение">
+    <div id="dialog" title="Изменение" style="display: none">
         <p>
             id стола: 
             <span id="tableId"></span>
@@ -96,6 +101,16 @@
                 @foreach (var rotation in Model.tableRotations)
                 {
                     <option value="@rotation.id">@rotation.rotationAngle</option>
+                }
+            </select>
+        </p>
+        <p>
+            Текущий статус стола:
+            <select id="statusId">
+                <option value="-1"> Нет статуса </option>
+                @foreach (var status in Model.statusList)
+                {
+                    <option value="@status.id">@status.name</option>
                 }
             </select>
         </p>
@@ -290,7 +305,14 @@ else
             }).done(function (table) {
                 $('#tableId').text(table.id);
                 $('#typeId option[value="'+ table.idTypeTable +'"]').prop('selected', true);
-                $('#rotationId option[value="'+ table.idTableRotation +'"]').prop('selected', true);
+                $('#rotationId option[value="' + table.idTableRotation + '"]').prop('selected', true);
+                console.log(table.idStatus);
+                console.log(table.idStatus != -1);
+                if (table.idStatus != -1) {
+                    $('#statusId option[value="' + table.idStatus + '"]').prop('selected', true);
+                } else {
+                    $('#statusId option:first').prop('selected', true);
+                }
                 $('#number').val(table.name);
                 $('#tableX').val(table.tableX);
                 $('#tableY').val(table.tableY);
@@ -383,7 +405,8 @@ else
                                     'rotationId': $('#rotationId').val(),
                                     'number': $('#number').val(),
                                     'tableX': $('#tableX').val(),
-                                    'tableY': $('#tableY').val()
+                                    'tableY': $('#tableY').val(),
+                                    'statusId': $('#statusId').val()
                                 },
                                 type: 'POST'
                             }).done(function () {

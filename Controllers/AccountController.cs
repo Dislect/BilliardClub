@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using BilliardClub.Models;
 using BilliardClub.View_Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace BilliardClub.Controllers
@@ -49,7 +50,7 @@ namespace BilliardClub.Controllers
                     }
                 }
             }
-            return PartialView(model);
+            return View("Authorization");
         }
 
         [HttpGet]
@@ -88,12 +89,12 @@ namespace BilliardClub.Controllers
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
             }
-            return PartialView(model);
+            return View("Authorization", model);
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("Main", "Home");
         }

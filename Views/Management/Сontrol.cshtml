@@ -1,4 +1,4 @@
-﻿
+﻿@model List<BilliardClub.Models.PoolTable>
 <link rel="stylesheet" href="~/css/management.css" type="text/css">
 
 <div class="control">
@@ -7,23 +7,25 @@
             <div class="category-wrap">
                 <h3>Пользователь: @User.Identity.Name</h3>
                 <ul>
-                    <li><a id="href_to_order_confirm" href="">Подтверждение заказа</a></li>
-                    <li><a id="href_to_order_history" href="">История</a></li>
-                    <li><a id="href_to_account" href="">Аккаунт</a></li>
+                    <li><a id="href_to_reserved_tables" href="">Забронированные столы</a></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="block2">
         <div class="content__block2">
-            
+            @await Html.PartialAsync("_ReservedTables", Model)
         </div>
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="~/js/jquery.bpopup.min.js"></script>
-
 <script>
+    $('#href_to_reserved_tables').css('background', 'linear-gradient(to bottom, #121111, #111111)');
 
+    $('#href_to_reserved_tables').click(function (event) {
+        $('li > a').css('background', '');
+        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_ReservedTables")");
+    });
 </script>

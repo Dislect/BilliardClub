@@ -1,4 +1,4 @@
-﻿@model BilliardClub.View_Models.LKViewModel
+﻿@model List<BilliardClub.Models.CartItem>
 <link rel="stylesheet" href="~/css/lk.css" type="text/css">
 
 <div class="lk">
@@ -16,7 +16,7 @@
     </div>
     <div class="block2">
         <div class="content__block2">
-            @await Html.PartialAsync("_Order", Model.CartItems)
+            @await Html.PartialAsync("_Order", Model)
         </div>
     </div>
 </div>
@@ -26,6 +26,7 @@
 
 <script>
     $('#href_to_order_confirm').css('background', 'linear-gradient(to bottom, #121111, #111111)');
+
     $('#href_to_order_confirm').click(function (event) {
         $('li > a').css('background', '');
         $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');

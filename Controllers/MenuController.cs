@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace BilliardClub.Controllers
@@ -28,12 +29,14 @@ namespace BilliardClub.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public bool CheckCartOnThisItem(int productId)
         {
             return _cart.CartItems.Exists(x => x.FoodItem != null && x.FoodItem.id == productId);
         }
 
         [HttpPost]
+        [Authorize]
         public async Task AddToCartProduct(int productId)
         {
             if (!CheckCartOnThisItem(productId))

@@ -14,6 +14,8 @@
   <ItemGroup>
     <Compile Include="Migrations\20220123120451_addtables.cs" />
     <Compile Include="Migrations\20220123120451_addtables.Designer.cs" />
+    <Compile Include="Migrations\20220129130408_addcolom.cs" />
+    <Compile Include="Migrations\20220129130408_addcolom.Designer.cs" />
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
   </ItemGroup>
 

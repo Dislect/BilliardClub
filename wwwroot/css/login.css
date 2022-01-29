@@ -82,3 +82,11 @@ main {
 a.button {
     text-decoration: none;
 }
+
+.field-validation-error, .validation {
+    color: red;
+}
+
+    .validation ul li {
+        list-style-type: none;
+    }
