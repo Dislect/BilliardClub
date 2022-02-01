@@ -19,9 +19,10 @@
     <div class="plan">
         @foreach (var poolTable in Model.poolTables)
         {
-            divStyle = "margin-left: " + poolTable.tableX + "px;" +
-                       "margin-top: " + poolTable.tableY + "px;" +
-                       "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);";
+            divStyle = "left: " + poolTable.tableX + "px;" +
+                       "top: " + poolTable.tableY + "px;" +
+                       "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);" +
+                       "position: absolute;";
 
             pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
@@ -297,8 +298,8 @@ else
 
         $('#add__table__on__plan').css({
             'position': 'absolute',
-            'margin-left':'93px',
-            'margin-top':'77px',
+            'left':'93px',
+            'top':'77px',
             'font-weight':'bold',
             'color': 'antiquewhite',
             'font-size': 'larger',
@@ -341,7 +342,7 @@ else
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableY').val(),
                 newValue = --oldValue;
-            tableblock.css('margin-top', newValue + 'px');
+            tableblock.css('top', newValue + 'px');
             $('#tableY').val(newValue);
         });
 
@@ -349,7 +350,7 @@ else
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableY').val(),
                 newValue = ++oldValue;
-            tableblock.css('margin-top', newValue + 'px');
+            tableblock.css('top', newValue + 'px');
             $('#tableY').val(newValue);
         });
 
@@ -357,7 +358,7 @@ else
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableX').val(),
                 newValue = --oldValue;
-            tableblock.css('margin-left', newValue + 'px');
+            tableblock.css('left', newValue + 'px');
             $('#tableX').val(newValue);
         });
 
@@ -365,32 +366,32 @@ else
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableX').val(),
                 newValue = ++oldValue;
-            tableblock.css('margin-left', newValue + 'px');
+            tableblock.css('left', newValue + 'px');
             $('#tableX').val(newValue);
         });
 
         $('#tableX').change(function() {
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableX').val();
-            tableblock.css('margin-left', oldValue + 'px');
+            tableblock.css('left', oldValue + 'px');
         });
 
         $('#tableY').change(function() {
             var tableblock = $('.plan').find('input[value="' + $('#tableId').text() + '"').parent(),
                 oldValue = $('#tableY').val();
-            tableblock.css('margin-top', oldValue + 'px');
+            tableblock.css('top', oldValue + 'px');
         });
 
         $('.trigger').each(function () {
 
             var tableblock = $(this),
                 transform = tableblock.find('p').css('transform'),
-                right = '-100px',
-                top = '-50px';
+                right = '-5px',
+                top = '-5px';
 
             if (transform.indexOf("-1") >= 0) {
                 right = '105px';
-                top = '-55px';
+                top = '-10px';
             }
 
             $('<img src="/img/pencil.png" class="change__table"/>').css({
@@ -400,8 +401,8 @@ else
                 'background-repeat': 'no-repeat',
                 'background-size': 'contain',
                 'transform': transform,
-                'margin-right': right,
-                'margin-top': top
+                'right': right,
+                'top': top
             }).insertAfter(tableblock.find('input[type="hidden"]'));
 
             var btnChange = tableblock.find('.change__table');
@@ -442,7 +443,8 @@ else
                                     },
                                     type: 'POST'
                                 }).done(function () {
-                                    $('#dialog').dialog("close"); });
+                                    window.location.href = '@Url.Action("Reservation")';
+                                });
                             }
                         }
                     ]

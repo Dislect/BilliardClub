@@ -36,9 +36,16 @@ namespace BilliardClub.Controllers
         [Authorize]
         public async Task AddToCartTable(int id)
         {
-            if (!_cart.CartItems.Exists(x => x.PoolTable != null && x.PoolTable.id == id))
+            var table = _context.PoolTables
+                .Include(x => x.statusTables)
+                .ThenInclude(x => x.status)
+                .FirstOrDefault(x => x.id == id);
+
+            if (table != null
+                && !_cart.CartItems.Exists(x => x.PoolTable != null && x.PoolTable.id == id)
+                && table.statusTables.LastOrDefault()?.status.name != "Забронирован"
+                && table.statusTables.LastOrDefault()?.status.name != "В корзине")
             {
-                var table = _context.PoolTables.First(x => x.id == id);
                 await _cart.AddToCartTable(table);
             }
         }
@@ -57,44 +64,61 @@ namespace BilliardClub.Controllers
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
                 .ThenInclude(x => x.status)
-                .First(x => x.id == tableId);
+                .FirstOrDefault(x => x.id == tableId);
 
-            table.idTableRotation = _context.TableRotations.First(x => x.poolTables.Contains(table)).id;
-            table.idTypeTable = _context.TypeTables.First(x => x.poolTables.Contains(table)).id;
+            if (table != null)
+            {
+                table.idTableRotation = _context.TableRotations.First(x => x.poolTables.Contains(table)).id;
+                table.idTypeTable = _context.TypeTables.First(x => x.poolTables.Contains(table)).id;
 
-            var status = table.statusTables.LastOrDefault();
+                var status = table.statusTables.LastOrDefault();
 
-            if (status != null)
-                table.idStatus = _context.Status.First(x => x.name == status.status.name).id;
-            else
-                table.idStatus = -1;
+                if (status != null)
+                    table.idStatus = _context.Status.First(x => x.name == status.status.name).id;
+                else
+                    table.idStatus = -1;
 
-            return table;
+                return table;
+            }
+
+            return null;
         }
 
         [HttpPost]
         [Authorize(Roles = "employee")]
         public void UpdatePoolTable(int tableId, int typeId, int rotationId, string number, int tableX, int tableY, int statusId)
         {
-            var table = _context.PoolTables.First(x => x.id == tableId);
-            table.tableRotation = _context.TableRotations.First(x => x.id == rotationId);
-            table.typeTable = _context.TypeTables.First(x => x.id == typeId);
+            var table = _context.PoolTables.FirstOrDefault(x => x.id == tableId);
 
-            if (_context.Status.FirstOrDefault(x => x.id == statusId) != null)
+            if (table != null)
             {
-                var status = _context.Status.First(x => x.id == statusId);
-                if (table.statusTables.LastOrDefault() != null)
+                table.tableRotation = _context.TableRotations.FirstOrDefault(x => x.id == rotationId);
+                table.typeTable = _context.TypeTables.FirstOrDefault(x => x.id == typeId);
+
+                var status = _context.Status.FirstOrDefault(x => x.id == statusId);
+                if (status != null)
                 {
-                    table.statusTables.Last().dateEnd = DateTime.Now;
+                    if (table.statusTables.LastOrDefault() != null)
+                    {
+                        table.statusTables.Last().dateEnd = DateTime.Now;
+                    }
+                    table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = status });
                 }
-                table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = status });
+
+                table.name = number;
+
+                if (int.TryParse(tableX.ToString(), out int result1))
+                {
+                    table.tableX = tableX;
+                }
+
+                if (int.TryParse(tableY.ToString(), out int result2))
+                {
+                    table.tableY = tableY;
+                }
+
+                _context.SaveChanges();
             }
-
-            table.name = number;
-            table.tableX = tableX;
-            table.tableY = tableY;
-
-            _context.SaveChanges();
         }
 
         [HttpPost]

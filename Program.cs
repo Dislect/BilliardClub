@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using BilliardClub.App_Data;
 using BilliardClub.Models;
 using BilliardClub.Models.Initialization;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +17,7 @@ namespace BilliardClub
         {
             var host = CreateHostBuilder(args).Build();
 
-            // инициализация admin аккаунта и ролей "employee" и "user"
+            // инициализация admin аккаунта, ролей "employee" и "user", БД
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -24,6 +25,8 @@ namespace BilliardClub
                 {
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var context = services.GetRequiredService<Context>();
+                    await InitialDataBase.InitialAsync(context);
                     await RoleInitializer.InitializeAsync(userManager, rolesManager);
                 }
                 catch (Exception ex)

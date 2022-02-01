@@ -35,9 +35,11 @@ namespace BilliardClub.Controllers
         [Authorize]
         public async Task AddToCartProduct(int productId)
         {
-            if (!CheckCartOnThisItem(productId))
+            var foodItem = _context.FoodItems.FirstOrDefault(x => x.id == productId);
+
+            if (foodItem != null
+                && !CheckCartOnThisItem(productId))
             {
-                var foodItem = _context.FoodItems.FirstOrDefault(x => x.id == productId);
                 await _cart.AddToCartProduct(foodItem);
             }
         }
