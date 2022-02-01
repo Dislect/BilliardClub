@@ -5,62 +5,117 @@
     <div align="left">
         <h2> Основная информамация </h2>
         <p>
-            Имя: @Model.firstName
+            <span>Имя:</span> @Model.firstName
         </p>
         <p>
-            Фамилия: @Model.lastName
+            <span>Фамилия:</span> @Model.lastName
         </p>
         <p>
-            Дата рождения: @Model.BirthDate.ToString("d")
+            <span>Дата рождения:</span> @Model.BirthDate.ToString("d")
         </p>
         <p>
-            Почта: @Model.Email
+            <span>Почта:</span> @Model.Email
         </p>
         <p>
-            Номер телефона: @Model.PhoneNumber
+            <span>Номер телефона:</span> @Model.PhoneNumber
         </p>
-    </div>
-
-    <div align="center">
-        <h2>Изменение пароля для пользователя @Model.firstName</h2>
-        <form id="change__password__form">
-            <div>
-                <input class="input__style" name="OldPassword" type="text" placeholder="Старый пароль" />
-            </div>
-            <div>
-                <input class="input__style" name="NewPassword" type="text" placeholder="Новый пароль" />
-            </div>
-            <div>
-                <input class="button" id="button__change__password" type="button" value="Сохранить" />
-            </div>
-        </form>
-        <h2>Изменение почты @Model.Email</h2>
-        <form id="change__email__form">
-            <div>
-                <input class="input__style" name="newEmail" type="text" placeholder="Новая почта" />
-            </div>
-            <div>
-                <input class="button" id="button__change__email" type="button" value="Сохранить" />
-            </div>
-        </form>
+        <p>
+            <a id="change_password_href">Изменение пароля для пользователя @Model.firstName</a>
+        </p>
+        <p>
+            <a id="change_email_href">Изменение почты @Model.Email</a>
+        </p>
     </div>
 </div>
 
-<div id="element_to_pop_up">
-    <span class="button b-close">
-        <span>X</span>
-    </span>
-    <div class="center">
-        <h2 id="massage"></h2>
+<div style="display: none">
+    <div id="pop_up_change_password" style="width: 800px; height: 300px;">
+        <span class="button b-close">
+            <span>X</span>
+        </span>
+        <h1>Изменение пароля</h1>
+        <form id="change__password__form" align="center">
+            <div>
+                <input class="input__style" name="OldPassword" type="text" placeholder="Старый пароль"/>
+            </div>
+            <div>
+                <input class="input__style" name="NewPassword" type="text" placeholder="Новый пароль"/>
+            </div>
+            <div>
+                <input class="button_form" id="button__change__password" type="button" value="Сохранить"/>
+            </div>
+        </form>
+    </div>
+
+    <div id="pop_up_change_email" style="width: 800px; height: 250px;">
+        <span class="button b-close">
+            <span>X</span>
+        </span>
+        <h1>Изменение почты</h1>
+        <form id="change__email__form" align="center">
+            <div>
+                <input class="input__style" id="newEmail" type="text" placeholder="Новая почта" />
+            </div>
+            <div>
+                <input class="button_form" id="button__change__email" type="button" value="Сохранить" />
+            </div>
+        </form>
+    </div>
+
+    <div id="element_to_pop_up" style="width: 800px; height: 250px;">
+        <span class="button b-close">
+            <span>X</span>
+        </span>
+        <div class="center">
+            <h2 id="massage"></h2>
+        </div>
     </div>
 </div>
-
 
 <script>
+    $('p > a').css({
+        'cursor': 'pointer',
+        'border-bottom': '1px solid tan'
+    });
+
+    $('p > span').css({
+        'color': 'tan'
+    });
+
+    $('#change_password_href').click(function() {
+        $('#pop_up_change_password').bPopup({
+            fadeSpeed: 'slow',
+            followSpeed: 1500
+        });
+    });
+
+    $('#change_email_href').click(function() {
+        $('#pop_up_change_email').bPopup({
+            fadeSpeed: 'slow',
+            followSpeed: 1500
+        });
+    });
+
+    $('#button__change__email').unbind("click").click(function () {
+        $.ajax({
+            url: '@Url.Action("ChangeEmail")',
+            data: { 'newEmail': $('#newEmail').val()},
+            type: 'POST'
+        }).done(function () {
+            $('#element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                onOpen: function() {
+                    $('#massage').text('Email успешно изменен');
+                }
+            });   
+        });
+    });
+
     $('#button__change__password').unbind("click").click(function () {
         $.ajax({
             url: '@Url.Action("ChangePassword")',
-            data: $('#change__password__form').serialize(),
+            data: $('#change__email__form').serialize(),
             type: 'POST'
         }).done(function (boolResult) {
             if (boolResult) {
@@ -68,7 +123,7 @@
                     fadeSpeed: 'slow',
                     followSpeed: 1500,
                     onOpen: function() {
-                        $('#massage').text('Пароль успешно изменен');
+                        $('#massage').text('Email успешно изменен');
                     }
                 });   
             } else {

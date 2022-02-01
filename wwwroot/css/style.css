@@ -266,7 +266,7 @@ header {
         font-size: 25px;
     }
 
-#element_to_pop_up {
+#element_to_pop_up, #pop_up_change_password, #pop_up_change_email{
     background-color: #fff;
     border-radius: 10px 10px 10px 10px;
     box-shadow: 0 0 25px 5px #999;

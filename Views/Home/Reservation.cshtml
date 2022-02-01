@@ -5,7 +5,7 @@
     Dictionary<string, string> cssStyle = new Dictionary<string, string>()
     {
         ["Русский бильярд"] = "rusb",
-        ["Амереканский пул"] = "poolb"
+        ["Американский пул"] = "poolb"
     };
 }
 
@@ -67,15 +67,17 @@
     </div>
 </div>
 
-<div id="element_to_pop_up">
+<div id="element_to_pop_up" style="width: 800px; height: 250px;">
     <span class="button b-close">
         <span>X</span>
     </span>
-    <div class="center">
-        <h2 id="number_table"></h2>
-    </div>
-    <div class="center">
-        <button id="button__reserve"> </button>
+    <div id="pop_up_body" style="display: flex; align-items: center; justify-content: center; flex-direction: column">
+        <div class="center">
+            <h2 id="number_table"></h2>
+        </div>
+        <div class="center">
+            <button id="button__reserve"> </button>
+        </div>
     </div>
 </div>
 
@@ -192,7 +194,6 @@
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
                 onOpen: function () {
-                    $(this).css('width', '700px');
                     $('#number_table').html('К сожалению, один пользователь может забронировать не более двух столов за раз.' +
                         '</br> <br/> Чтобы забронировать другой стол, удалите ранее добавленные столы в личном кабинете!');
                     $('#button__reserve').css({
@@ -212,7 +213,6 @@
                 followSpeed: 1500,
                 autoClose: 2500,
                 onOpen: function() {
-                    $(this).css('width', '400px');
                     $('#number_table').html('Вы уже выбирали этот стол! <br/> <br/> Пожалуйста, выберите другой.');
                     $('#button__reserve').hide();
                 }
@@ -224,8 +224,7 @@
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
                 autoClose: 2500,
-                onOpen: function() {
-                    $(this).css('width', '400px');
+                onOpen: function () {
                     $('#number_table').html('В данный момент этот стол бронирует кто то другой. <br/> <br/> Пожалуйста, выберите другой стол.');
                     $('#button__reserve').hide();
                 }
@@ -238,7 +237,6 @@
                 followSpeed: 1500,
                 autoClose: 2500,
                 onOpen: function () {
-                    $(this).css('width', '400px');
                     $('#number_table').html('В данный момент этот стол забронирован. <br/> <br/> Пожалуйста, выберите другой стол.');
                     $('#button__reserve').hide();
                 }
@@ -280,7 +278,6 @@ else
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
                 onOpen: function () {
-                    $(this).css('width', '700px');
                     $('#number_table').html('Бронирование бильярдных столов возможно только для авторизированных пользователей! <br/> <br/> Пожалуйста, войдите в личный кабинет.');
                     $('#button__reserve').css('margin-top', '50px').text('Войти').click(function() {
                         window.location.href = '@Url.Action("Authorization", "Account")';
@@ -296,6 +293,27 @@ else
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
+        $('.plan').prepend('<a id="add__table__on__plan">Добавить бильярдный стол</a>');
+
+        $('#add__table__on__plan').css({
+            'position': 'absolute',
+            'margin-left':'93px',
+            'margin-top':'77px',
+            'font-weight':'bold',
+            'color': 'antiquewhite',
+            'font-size': 'larger',
+            'cursor':'pointer'
+        });
+
+        $('#add__table__on__plan').click(function() {
+            $.ajax({
+                url: "@Url.Action("AddPoolTableInPlan")",
+                type: "POST"
+            }).done(function() {
+                window.location.href = '@Url.Action("Reservation")';
+            });
+        });
+
         function ChangeDialog(id)
         {
             $.ajax({
@@ -395,27 +413,42 @@ else
                     resizable: 'false',
                     width: '350px',
                     minHeight: '800px',
-                    buttons: [{
-                        text: "Сохранить", click: function () {
-                            $.ajax({
-                                url: '@Url.Action("UpdatePoolTable")',
-                                data: {
-                                    'tableId': $('#tableId').text(),
-                                    'typeId': $('#typeId').val(),
-                                    'rotationId': $('#rotationId').val(),
-                                    'number': $('#number').val(),
-                                    'tableX': $('#tableX').val(),
-                                    'tableY': $('#tableY').val(),
-                                    'statusId': $('#statusId').val()
-                                },
-                                type: 'POST'
-                            }).done(function () {
-                                $('#dialog').dialog("close");
-                            });
+                    buttons: [
+                        {
+                            text: "Удалить стол", click: function () {
+                                $.ajax({
+                                    url: "@Url.Action("DeletePoolTableInPlan")",
+                                    type: "POST",
+                                    data: {
+                                        'tableId': $('#tableId').text()
+                                    }
+                                }).done(function() {
+                                    window.location.href = '@Url.Action("Reservation")';
+                                });
+                            }
+                        },
+                        {
+                            text: "Сохранить", click: function () {
+                                $.ajax({
+                                    url: '@Url.Action("UpdatePoolTable")',
+                                    data: {
+                                        'tableId': $('#tableId').text(),
+                                        'typeId': $('#typeId').val(),
+                                        'rotationId': $('#rotationId').val(),
+                                        'number': $('#number').val(),
+                                        'tableX': $('#tableX').val(),
+                                        'tableY': $('#tableY').val(),
+                                        'statusId': $('#statusId').val()
+                                    },
+                                    type: 'POST'
+                                }).done(function () {
+                                    $('#dialog').dialog("close"); });
+                            }
                         }
-                    }]
+                    ]
                 });
             });
         });
+
     </script>
 }

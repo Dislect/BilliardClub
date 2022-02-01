@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BilliardClub.Models
+﻿namespace BilliardClub.Models
 {
     public class OrderPoolTable
     {

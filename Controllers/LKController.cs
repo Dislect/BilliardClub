@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
-using BilliardClub.View_Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +69,7 @@ namespace BilliardClub.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             user.Email = newEmail;
+            user.UserName = newEmail;
             await _context.SaveChangesAsync();
         }
 

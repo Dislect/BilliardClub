@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
 using BilliardClub.View_Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace BilliardClub.Controllers
@@ -97,6 +94,33 @@ namespace BilliardClub.Controllers
             table.tableX = tableX;
             table.tableY = tableY;
 
+            _context.SaveChanges();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "employee")]
+        public void DeletePoolTableInPlan(int tableId)
+        {
+            var table = _context.PoolTables.FirstOrDefault(x => x.id == tableId);
+            if (table != null)
+            {
+                _context.PoolTables.Remove(table);
+                _context.SaveChanges();
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "employee")]
+        public void AddPoolTableInPlan()
+        {
+            _context.PoolTables.Add( new PoolTable()
+            {
+                name = "new",
+                tableX = 710,
+                tableY = 275,
+                typeTable = _context.TypeTables.FirstOrDefault(),
+                tableRotation = _context.TableRotations.FirstOrDefault()
+            });
             _context.SaveChanges();
         }
 

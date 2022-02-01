@@ -286,11 +286,10 @@ input[type=number]::-webkit-outer-spin-button {
     border-color: #C1D9FD;
 }
 
-.button {
+.button_form {
     width: 250px;
     font-weight: bold;
     font-size: 14px;
-    display: block;
     height: 45px;
     background: #247FFF;
     border-radius: 5px;
@@ -303,7 +302,7 @@ input[type=number]::-webkit-outer-spin-button {
     margin-bottom: 15px;
 }
 
-.button:hover {
-    background-color: #0D6CF2;
-}
+    .button_form:hover {
+        background-color: #0D6CF2;
+    }
 /* AccountSettings */
