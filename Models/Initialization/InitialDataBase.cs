@@ -6,6 +6,9 @@ namespace BilliardClub.Models.Initialization
 {
     public class InitialDataBase
     {
+        private static string AmericanPoolTable = "Американский пул";
+        private static string RussianPoolTable = "Русский бильярд";
+
         public static async Task InitialAsync(Context _context)
         {
             if (!_context.TypeTables.Any())
@@ -13,13 +16,13 @@ namespace BilliardClub.Models.Initialization
                 _context.TypeTables.AddRange(
                     new TypeTable()
                     {
-                        name = "Русский бильярд",
+                        name = RussianPoolTable,
                         price = 200
                     },
 
                     new TypeTable()
                     {
-                        name = "Американский бильярд",
+                        name = AmericanPoolTable,
                         price = 200
                     }
                 );
@@ -38,7 +41,7 @@ namespace BilliardClub.Models.Initialization
                     {
                         rotationAngle = 90
                     }
-                );
+                ); 
                 await _context.SaveChangesAsync();
             }
 
@@ -150,7 +153,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 635,
                         tableY = 630,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -159,7 +162,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 805,
                         tableY = 630,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -168,7 +171,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 970,
                         tableY = 630,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -177,7 +180,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 635,
                         tableY = 780,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -186,7 +189,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 805,
                         tableY = 780,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -195,7 +198,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 970,
                         tableY = 780,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -204,7 +207,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 635,
                         tableY = 935,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -213,7 +216,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 805,
                         tableY = 935,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -222,7 +225,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 970,
                         tableY = 935,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -231,7 +234,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 715,
                         tableY = 1110,
                         tableRotation = _context.TableRotations.FirstOrDefault(),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -240,7 +243,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 895,
                         tableY = 1110,
                         tableRotation = _context.TableRotations.FirstOrDefault(),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -249,7 +252,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 715,
                         tableY = 1270,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     },
 
                     new PoolTable()
@@ -258,7 +261,7 @@ namespace BilliardClub.Models.Initialization
                         tableX = 878,
                         tableY = 1270,
                         tableRotation = _context.TableRotations.FirstOrDefault(x => x.rotationAngle == 90),
-                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == "Американский бильярд")
+                        typeTable = _context.TypeTables.FirstOrDefault(x => x.name == AmericanPoolTable)
                     }
                 );
             }

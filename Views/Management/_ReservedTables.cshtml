@@ -2,33 +2,40 @@
 
 <div class="reserved_tables__block">
     <h1> Забронированные столы </h1>
-    <div class="center">
-        <table class="table">
-            <thead>
-            <tr>
-                <th> № Стола </th>
-                <th> Дата и время начала бронирования </th>
-                <th> Дата и время окончания бронирования </th>
-                <th> Статус </th>
-                <th>  </th>
-            </tr>
-            </thead>
-            <tbody style="color: antiquewhite">
-            @foreach (var table in Model)
-            {
-                <tr id="@table.id">
-                    <td> №@table.name </td>
-                    <td> @table.statusTables.Last().dateStart.ToString("f") </td>
-                    <td> @table.statusTables.Last().dateEnd.ToString("f") </td>
-                    <td> @table.statusTables.Last().status.name </td>
-                    <td>
-                        <button class="remove__tr__table"> Завершить бронирование </button>
-                    </td>
+    @if (Model.Any())
+    {
+        <div class="center">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th> № Стола </th>
+                    <th> Дата и время начала бронирования </th>
+                    <th> Дата и время окончания бронирования </th>
+                    <th> Статус </th>
+                    <th>  </th>
                 </tr>
-            }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody style="color: antiquewhite">
+                @foreach (var table in Model)
+                {
+                    <tr id="@table.id">
+                        <td> №@table.name </td>
+                        <td> @table.statusTables.Last().dateStart.ToString("f") </td>
+                        <td> @table.statusTables.Last().dateEnd?.ToString("f") </td>
+                        <td> @table.statusTables.Last().status.name </td>
+                        <td>
+                            <button class="remove__tr__table"> Завершить бронирование </button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h2>Нет забронированных столов</h2>
+    }
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

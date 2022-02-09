@@ -1,4 +1,4 @@
-﻿@model List<BilliardClub.Models.CartItem>
+﻿@model BilliardClub.Models.Cart
 <link rel="stylesheet" href="~/css/lk.css" type="text/css">
 
 <div class="lk">
@@ -25,25 +25,27 @@
 <script src="~/js/jquery.bpopup.min.js"></script>
 
 <script>
-    $('#href_to_order_confirm').css('background', 'linear-gradient(to bottom, #121111, #111111)');
+    var button_style = { 'background': 'linear-gradient(to bottom, #121111, #111111)' };
+    $('#href_to_order_confirm').css(button_style);
+
+    $('.category-wrap a').each(function() {
+        $(this).click(function() {
+            $('li > a').css('background', '');
+            $(this).css(button_style);
+        });
+    });
 
     $('#href_to_order_confirm').click(function (event) {
-        $('li > a').css('background', '');
-        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
         event.preventDefault();
         $('.content__block2').load("@Url.Action("_Order")");
     });
 
     $('#href_to_order_history').click(function (event) {
-        $('li > a').css('background', '');
-        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
         event.preventDefault();
         $('.content__block2').load("@Url.Action("_History")");
     });
 
     $('#href_to_account').click(function (event) {
-        $('li > a').css('background', '');
-        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
         event.preventDefault();
         $('.content__block2').load("@Url.Action("_AccountSettings")");
     });

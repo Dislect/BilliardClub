@@ -5,6 +5,6 @@
         public int id { get; set; }
         public PoolTable poolTable { get; set; }
         public Order order { get; set; }
-        public uint quantity { get; set; }
+        public uint numberHours { get; set; }
     }
 }

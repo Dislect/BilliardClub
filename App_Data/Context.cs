@@ -6,9 +6,13 @@ namespace BilliardClub.App_Data
 {
     public class Context : IdentityDbContext<User>
     {
-        public Context(DbContextOptions<Context> options) : base(options) { }
+        public Context(DbContextOptions<Context> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
 
-        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<CartPoolTable> CartPoolTables { get; set; }
+        public DbSet<CartFoodItem> CartFoodItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<PoolTable> PoolTables { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }

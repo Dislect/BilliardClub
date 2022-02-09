@@ -26,7 +26,7 @@
 
             pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
 
-            if (Model.cart.CartItems.Exists(x => x.PoolTable != null
+            if (Model.cart.CartPoolTables.Exists(x => x.PoolTable != null
                                                  && x.PoolTable.id == poolTable.id
                                                  && Model.cart.cartId == x.cartId))
             {

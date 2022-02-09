@@ -4,14 +4,16 @@ using BilliardClub.App_Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BilliardClub.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20220207090723_updatecol")]
+    partial class updatecol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace BilliardClub.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("BilliardClub.Models.CartFoodItem", b =>
+            modelBuilder.Entity("BilliardClub.Models.CartItem", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -28,26 +30,6 @@ namespace BilliardClub.Migrations
 
                     b.Property<int?>("FoodItemid")
                         .HasColumnType("int");
-
-                    b.Property<string>("cartId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("quantity")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("FoodItemid");
-
-                    b.ToTable("CartFoodItems");
-                });
-
-            modelBuilder.Entity("BilliardClub.Models.CartPoolTable", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("PoolTableid")
                         .HasColumnType("int");
@@ -58,14 +40,13 @@ namespace BilliardClub.Migrations
                     b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("reservationDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("id");
+
+                    b.HasIndex("FoodItemid");
 
                     b.HasIndex("PoolTableid");
 
-                    b.ToTable("CartPoolTables");
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("BilliardClub.Models.FoodItem", b =>
@@ -125,7 +106,7 @@ namespace BilliardClub.Migrations
                     b.Property<int?>("orderid")
                         .HasColumnType("int");
 
-                    b.Property<long>("quantity")
+                    b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
                     b.HasKey("id");
@@ -144,14 +125,14 @@ namespace BilliardClub.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("numberHours")
-                        .HasColumnType("bigint");
-
                     b.Property<int?>("orderid")
                         .HasColumnType("int");
 
                     b.Property<int?>("poolTableid")
                         .HasColumnType("int");
+
+                    b.Property<long>("numberHours")
+                        .HasColumnType("bigint");
 
                     b.HasKey("id");
 
@@ -494,20 +475,17 @@ namespace BilliardClub.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("BilliardClub.Models.CartFoodItem", b =>
+            modelBuilder.Entity("BilliardClub.Models.CartItem", b =>
                 {
                     b.HasOne("BilliardClub.Models.FoodItem", "FoodItem")
                         .WithMany()
                         .HasForeignKey("FoodItemid");
 
-                    b.Navigation("FoodItem");
-                });
-
-            modelBuilder.Entity("BilliardClub.Models.CartPoolTable", b =>
-                {
                     b.HasOne("BilliardClub.Models.PoolTable", "PoolTable")
                         .WithMany()
                         .HasForeignKey("PoolTableid");
+
+                    b.Navigation("FoodItem");
 
                     b.Navigation("PoolTable");
                 });

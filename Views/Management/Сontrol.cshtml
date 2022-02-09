@@ -8,6 +8,9 @@
                 <h3>Пользователь: @User.Identity.Name</h3>
                 <ul>
                     <li><a id="href_to_reserved_tables" href="">Забронированные столы</a></li>
+                    <li><a id="href_to_types_tables_and_rotation" href="">Типы столов и угол вращения</a></li>
+                    <li><a id="href_to_tables_status_history" href="">История использования столов</a></li>
+                    <li><a id="href_to_user_orders" href="">Заказы пользователей</a></li>
                 </ul>
             </div>
         </div>
@@ -20,12 +23,33 @@
 </div>
 
 <script>
-    $('#href_to_reserved_tables').css('background', 'linear-gradient(to bottom, #121111, #111111)');
+    var button_style = { 'background': 'linear-gradient(to bottom, #121111, #111111)' };
+    $('#href_to_reserved_tables').css(button_style);
+
+    $('.category-wrap a').each(function() {
+        $(this).click(function() {
+            $('li > a').css('background', '');
+            $(this).css(button_style);
+        });
+    });
 
     $('#href_to_reserved_tables').click(function (event) {
-        $('li > a').css('background', '');
-        $(this).css('background', 'linear-gradient(to bottom, #121111, #111111)');
         event.preventDefault();
         $('.content__block2').load("@Url.Action("_ReservedTables")");
+    });
+
+    $('#href_to_types_tables_and_rotation').click(function (event) {
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_TypesTablesAndRotation")");
+    });
+
+    $('#href_to_tables_status_history').click(function (event) {
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_TablesStatusHistory")");
+    });
+
+    $('#href_to_user_orders').click(function (event) {
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_UserOrders")");
     });
 </script>

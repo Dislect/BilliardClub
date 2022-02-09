@@ -28,7 +28,7 @@ namespace BilliardClub.Controllers
         [Authorize]
         public bool CheckCartOnThisItem(int productId)
         {
-            return _cart.CartItems.Exists(x => x.FoodItem != null && x.FoodItem.id == productId);
+            return _cart.CartFoodItems.Exists(x => x.FoodItem != null && x.FoodItem.id == productId);
         }
 
         [HttpPost]

@@ -17,7 +17,8 @@ namespace BilliardClub.Models
 
         public string cartId { get; set; }
 
-        public List<CartItem> CartItems => GetCartItems().Result;
+        public List<CartPoolTable> CartPoolTables  => GetCartPoolTables().Result;
+        public List<CartFoodItem> CartFoodItems => GetCartFoodItems().Result;
 
         public Cart(Context context)
         {
@@ -38,16 +39,18 @@ namespace BilliardClub.Models
         public Task AddToCartTable(PoolTable table)
         {
             var statusInCart = _context.Status.FirstOrDefault(x => x.name == "В корзине");
-            if (table.statusTables.Count != 0)
+
+            if (table.statusTables.Any())
             {
                 table.statusTables.Last().dateEnd = DateTime.Now;
             }
             table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusInCart });
-            _context.CartItems.Add(new CartItem()
+
+            _context.CartPoolTables.Add(new CartPoolTable()
             {
                 cartId = cartId,
                 PoolTable = table,
-                quantity = 1
+                numberHours = 1
             });
             _context.SaveChanges();
 
@@ -55,24 +58,30 @@ namespace BilliardClub.Models
             var deleteTableInCartTask = Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(60000);
-                if (_context.CartItems.Include(x => x.PoolTable).ToList().Exists(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
+
+                if (_context.CartPoolTables.Include(x => x.PoolTable)
+                    .Any(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
                 {
-                    _context.CartItems.Remove(_context.CartItems.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
+                    _context.CartPoolTables.Remove(_context.CartPoolTables.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
+
+                    var statusFree = _context.Status.First(x => x.name == "Свободен");
+
+                    if (table.statusTables.Any())
+                    {
+                        table.statusTables.Last().dateEnd = DateTime.Now;
+                    }
+
+                    table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusFree });
+                    _context.SaveChanges();
                 }
-                var statusFree = _context.Status.First(x => x.name == "Свободен");
-                if (table.statusTables.Count != 0)
-                {
-                    table.statusTables.Last().dateEnd = DateTime.Now;
-                }
-                table.statusTables.Add(new StatusTable(){dateStart = DateTime.Now, status = statusFree});
-                _context.SaveChanges();
             });
+
             return deleteTableInCartTask;
         }
 
         public async Task AddToCartProduct(FoodItem product)
         {
-            _context.CartItems.Add(new CartItem()
+            _context.CartFoodItems.Add(new CartFoodItem()
             {
                 cartId = cartId,
                 FoodItem = product,
@@ -83,34 +92,44 @@ namespace BilliardClub.Models
 
         public void DeleteTableInCart(PoolTable table)
         {
-            _context.CartItems.Remove(CartItems.First(x => x.PoolTable != null && x.PoolTable.id == table.id));
+            _context.CartPoolTables.Remove(CartPoolTables.First(x => x.PoolTable != null && x.PoolTable.id == table.id));
             var statusFree = _context.Status.First(x => x.name == "Свободен");
-            if (table.statusTables.Count != 0)
+
+            if (table.statusTables.Any())
             {
                 table.statusTables.Last().dateEnd = DateTime.Now;
             }
+
             table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusFree });
             _context.SaveChanges();
         }
 
         public void DeleteProductInCart(FoodItem foodItem)
         {
-            _context.CartItems.Remove(CartItems.First(x => x.FoodItem.id == foodItem.id));
+            _context.CartFoodItems.Remove(CartFoodItems.First(x => x.FoodItem.id == foodItem.id));
             _context.SaveChanges();
         }
 
         public void DeleteAllItemsInCart()
         {
-            _context.CartItems.RemoveRange(CartItems);
+            _context.CartPoolTables.RemoveRange(CartPoolTables);
+            _context.CartFoodItems.RemoveRange(CartFoodItems);
             _context.SaveChanges();
         }
 
-        private async Task<List<CartItem>> GetCartItems()
+        private async Task<List<CartPoolTable>> GetCartPoolTables()
         {
-            return await _context.CartItems.Where(item => item.cartId == cartId)
+            return await _context.CartPoolTables.Where(item => item.cartId == cartId)
                 .Include(x => x.PoolTable).ThenInclude(x => x.statusTables)
                 .Include(x => x.PoolTable).ThenInclude(x => x.typeTable)
-                .Include(x => x.FoodItem).ToListAsync();
+                .ToListAsync();
+        }
+
+        private async Task<List<CartFoodItem>> GetCartFoodItems()
+        {
+            return await _context.CartFoodItems.Where(item => item.cartId == cartId)
+                .Include(x => x.FoodItem)
+                .ToListAsync();
         }
     }
 }

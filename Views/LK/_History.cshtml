@@ -18,11 +18,11 @@
                 <tr>
                     <td> @order.orderDate.ToString("D") </td>
                     <td>
-                        @if (order.poolTables.Count != 0)
+                        @if (order.poolTables.Any())
                         {
                             foreach (var orderPoolTable in order.poolTables)
                             {
-                                <p>Стол №@orderPoolTable.poolTable.name (@orderPoolTable.quantity ч.)</p> 
+                                <p>Стол №@orderPoolTable.poolTable.name (@orderPoolTable.numberHours ч.)</p> 
                             }
                         }
                         else
@@ -31,7 +31,7 @@
                         }
                     </td>
                     <td>
-                        @if (order.foodItems.Count != 0)
+                        @if (order.foodItems.Any())
                         {
                             foreach (var orderFoodItem in order.foodItems)
                             {

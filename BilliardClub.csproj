@@ -16,6 +16,10 @@
     <Compile Include="Migrations\20220123120451_addtables.Designer.cs" />
     <Compile Include="Migrations\20220129130408_addcolom.cs" />
     <Compile Include="Migrations\20220129130408_addcolom.Designer.cs" />
+    <Compile Include="Migrations\20220207090723_updatecol.cs" />
+    <Compile Include="Migrations\20220207090723_updatecol.Designer.cs" />
+    <Compile Include="Migrations\20220209100622_newTable.cs" />
+    <Compile Include="Migrations\20220209100622_newTable.Designer.cs" />
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
   </ItemGroup>
 

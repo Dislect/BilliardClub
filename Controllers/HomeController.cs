@@ -26,6 +26,8 @@ namespace BilliardClub.Controllers
             return View();
         }
 
+        #region Reservation
+
         [HttpGet]
         public async Task<ActionResult> Reservation()
         {
@@ -42,7 +44,7 @@ namespace BilliardClub.Controllers
                 .FirstOrDefault(x => x.id == id);
 
             if (table != null
-                && !_cart.CartItems.Exists(x => x.PoolTable != null && x.PoolTable.id == id)
+                && !_cart.CartPoolTables.Exists(x => x.PoolTable != null && x.PoolTable.id == id)
                 && table.statusTables.LastOrDefault()?.status.name != "Забронирован"
                 && table.statusTables.LastOrDefault()?.status.name != "В корзине")
             {
@@ -54,8 +56,12 @@ namespace BilliardClub.Controllers
         [Authorize]
         public bool CheckingNumberTablesInCart()
         {
-            return _cart.CartItems.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < 2;
+            return _cart.CartPoolTables.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < 2;
         }
+
+        #endregion
+
+        #region Administration
 
         [HttpGet]
         [Authorize(Roles = "employee")]
@@ -88,7 +94,9 @@ namespace BilliardClub.Controllers
         [Authorize(Roles = "employee")]
         public void UpdatePoolTable(int tableId, int typeId, int rotationId, string number, int tableX, int tableY, int statusId)
         {
-            var table = _context.PoolTables.FirstOrDefault(x => x.id == tableId);
+            var table = _context.PoolTables
+                .Include(x => x.statusTables)
+                .FirstOrDefault(x => x.id == tableId);
 
             if (table != null)
             {
@@ -106,16 +114,8 @@ namespace BilliardClub.Controllers
                 }
 
                 table.name = number;
-
-                if (int.TryParse(tableX.ToString(), out int result1))
-                {
-                    table.tableX = tableX;
-                }
-
-                if (int.TryParse(tableY.ToString(), out int result2))
-                {
-                    table.tableY = tableY;
-                }
+                table.tableX = tableX;
+                table.tableY = tableY;
 
                 _context.SaveChanges();
             }
@@ -137,7 +137,7 @@ namespace BilliardClub.Controllers
         [Authorize(Roles = "employee")]
         public void AddPoolTableInPlan()
         {
-            _context.PoolTables.Add( new PoolTable()
+            _context.PoolTables.Add(new PoolTable()
             {
                 name = "new",
                 tableX = 710,
@@ -147,6 +147,8 @@ namespace BilliardClub.Controllers
             });
             _context.SaveChanges();
         }
+
+        #endregion
 
         private async Task<ReservationViewModel> InitModel()
         {

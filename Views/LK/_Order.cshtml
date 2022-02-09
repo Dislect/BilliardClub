@@ -1,11 +1,12 @@
-﻿@model List<BilliardClub.Models.CartItem>
+﻿@model BilliardClub.Models.Cart
 
 <div class="order__confirm__block">
     <h1> Подтверждение заказа </h1>
     <div class="order__table">
-        @if (Model.Count != 0)
+        @if (Model.CartPoolTables.Any() 
+             || Model.CartFoodItems.Any())
         {
-            if (Model.Exists(x => x.PoolTable != null))
+            if (Model.CartPoolTables.Any())
             {
                 <h2> Выбранные столики: </h2>
                 <div class="center">
@@ -20,16 +21,16 @@
                             </tr>
                         </thead>
                         <tbody style="color: antiquewhite">
-                            @foreach (var item in Model.Where(x => x.PoolTable != null))
+                            @foreach (var item in Model.CartPoolTables)
                             {
-                                <tr class="position" id="@item.PoolTable.id">
+                                <tr class="position_table" id="@item.PoolTable.id">
                                     <td> №@item.PoolTable.name </td>
                                     <td> @item.PoolTable.typeTable.name </td>
                                     <td>  <span class="price">@item.PoolTable.typeTable.price</span> рублей/час </td>
                                     <td>
                                         <div class="quantity">
                                             <input type="hidden" value="@item.id"/>
-                                            <input type="number" min="1" max="6" step="1" value="@item.quantity" readonly style="user-select: none">
+                                            <input type="number" min="1" max="6" step="1" value="@item.numberHours" readonly style="user-select: none">
                                         </div>
                                     </td>
                                     <td>
@@ -41,7 +42,7 @@
                     </table>
                 </div>
             }
-            if (Model.Exists(x => x.FoodItem != null))
+            if (Model.CartFoodItems.Any())
             {
                 <h2> Выбранное меню: </h2>
                 <div class="center">
@@ -55,9 +56,9 @@
                             </tr>
                         </thead>
                         <tbody style="color: antiquewhite">
-                            @foreach (var item in Model.Where(x => x.FoodItem != null))
+                            @foreach (var item in Model.CartFoodItems)
                             {
-                                <tr class="position" id="@item.FoodItem.id">
+                                <tr class="position_food" id="@item.FoodItem.id">
                                     <td> @item.FoodItem.title </td>
                                     <td>  <span class="price">@item.FoodItem.price</span> рублей </td>
                                     <td>
@@ -158,25 +159,39 @@
         return sum;
     }
 
-    function UpdateQuantity() {
-        $('.position').each(function () {
+    function UpdateProductQuantity() {
+        $('.position_food').each(function () {
             var quantity = $(this).find('input[type="number"]').val();
-            if (quantity > 1) {
-                var id = $(this).find('input[type="hidden"]').val();
-                $.ajax({
-                    url: '@Url.Action("UpdateQuantity")',
-                    data: {
-                        cartItemId: id,
-                        quantity: quantity
-                    },
-                    type: 'POST'
-                });
-            }
+            var id = $(this).find('input[type="hidden"]').val();
+            $.ajax({
+                url: '@Url.Action("UpdateProductQuantity")',
+                data: {
+                    cartFoodItemId: id,
+                    quantity: quantity
+                },
+                type: 'POST'
+            });
+        });
+    }
+
+    function UpdateTableNumberHours() {
+        $('.position_table').each(function () {
+            var numberHours = $(this).find('input[type="number"]').val();
+            var id = $(this).find('input[type="hidden"]').val();
+            $.ajax({
+                url: '@Url.Action("UpdateTableNumberHours")',
+                data: {
+                    cartPoolTableId: id,
+                    numberHours: numberHours
+                },
+                type: 'POST'
+            });
         });
     }
 
     $('#submit__order').unbind("click").click(function () {
-        UpdateQuantity();
+        UpdateProductQuantity();
+        UpdateTableNumberHours();
         $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         $.ajax({
             url: '@Url.Action("ConfirmOrder")',

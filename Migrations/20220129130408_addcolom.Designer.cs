@@ -37,7 +37,7 @@ namespace BilliardClub.Migrations
                     b.Property<string>("cartId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("quantity")
+                    b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
                     b.HasKey("id");
@@ -106,7 +106,7 @@ namespace BilliardClub.Migrations
                     b.Property<int?>("orderid")
                         .HasColumnType("int");
 
-                    b.Property<long>("quantity")
+                    b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
                     b.HasKey("id");
@@ -131,7 +131,7 @@ namespace BilliardClub.Migrations
                     b.Property<int?>("poolTableid")
                         .HasColumnType("int");
 
-                    b.Property<long>("quantity")
+                    b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
                     b.HasKey("id");
