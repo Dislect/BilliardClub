@@ -300,29 +300,37 @@ header {
 }
 
 #button__reserve {
+    margin-left: 5px;
+    padding: 7px;
+    height: 70px;
     color: snow;
     background: #404040;
     width: 200px;
-    height: 45px;
     font-size: 20px;
     box-shadow: 0 2px 3px rgba(1,5,1,0.3);
     font-weight: bold;
     border-radius: 10px;
-    margin-top: 100px;
 }
 
     #button__reserve:hover {
         background: #292929;
     }
 
-.center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
 
 .account__settings__block p {
     font-size: 20px;
+}
+
+#date_reservation {
+    margin-top: 15px;
+    width: 190px;
+    border-radius: 5px;
+    padding: 5px;
 }
 /*    Reservation     */

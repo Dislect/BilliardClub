@@ -72,13 +72,17 @@
     <span class="button b-close">
         <span>X</span>
     </span>
-    <div id="pop_up_body" style="display: flex; align-items: center; justify-content: center; flex-direction: column">
+    <div id="pop_up_body" style="display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column">
         <div class="center">
             <h2 id="number_table"></h2>
         </div>
+        <input id="date_reservation" type="datetime-local">
         <div class="center">
             <button id="button__reserve"> </button>
         </div>
+    </div>
+    <div class="checkbox_container">
+        <input id="date_on" type="checkbox" /> <span> Забронировать к определенному времени </span>
     </div>
 </div>
 
@@ -150,20 +154,37 @@
 @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
 {
     <script>
+        $('#date_reservation').hide();
+        $('.checkbox_container').hide();
+
+        $('#date_on').click(function(){
+            if ($(this).is(':checked')){
+                $('#date_reservation').show(100);
+            } else {
+                $('#date_reservation').hide(100);
+            }
+        });  
+
         function ShowReservation(This) {
             var id = $(".id", This).val();
             var numberTable = $(".numberTable", This).text();
             $('#element_to_pop_up').bPopup({
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
-                onOpen: function() {
+                onOpen: function () {
+                    $('.checkbox_container').show();
                     $('#number_table').text('Вы хотите забронировать этот столик (№ ' + numberTable + ') ?');
                     $('#button__reserve').show().text('Забронировать');
+                },
+                onClose: function () {
+                    $('#date_on').prop('checked', false);
+                    $('#date_reservation').hide();
+                    $('.checkbox_container').hide();
                 }
             });
 
             $('#button__reserve').unbind("click").click(function() {
-
+                $('#date_reservation').hide();
                 $(this).prop('disabled', true);
                 setTimeout(function() {
                         $(this).prop('disabled', false);
@@ -172,38 +193,33 @@
 
                 $.ajax({
                     url: '@Url.Action("AddToCartTable")',
-                    data: { id: id },
+                    data: {
+                        id: id,
+                        dateReservation: $('#date_reservation').val()
+                    },
                     type: 'POST',
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $('#number_table').html('Стол добавлен в список бронирования!' +
                             '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
-                        $('#button__reserve').css({
-                            'margin-top': '15px',
-                            'padding': '5px',
-                            'height': 'auto'
-                        }).text('Перейти в личный кабинет').click(function() {
+                        $('#button__reserve').text('Перейти в личный кабинет').click(function() {
                             window.location.href = '@Url.Action("Info", "LK")';
                         });
                         This.addClass('inMyCart');
                     }
+                }).fail(function (error) {
+                    $('#number_table').html(error.responseText);
+                    $('.center button').hide();
                 });
             });
         }
 
-        function ShowErrorMessage() {
+        function ShowErrorMessage(error) {
             $('#element_to_pop_up').bPopup({
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
                 onOpen: function () {
-                    $('#number_table').html('К сожалению, один пользователь может забронировать не более двух столов за раз.' +
-                        '</br> <br/> Чтобы забронировать другой стол, удалите ранее добавленные столы в личном кабинете!');
-                    $('#button__reserve').css({
-                        'margin-top': '15px',
-                        'padding': '5px',
-                        'height': 'auto'
-                    }).text('Перейти в личный кабинет').click(function () {
-                        window.location.href = '@Url.Action("Info", "LK")';
-                    });
+                    $('#number_table').html(error);
+                    $('.center button').hide();
                 }
             });
         }
@@ -215,7 +231,7 @@
                 autoClose: 2500,
                 onOpen: function() {
                     $('#number_table').html('Вы уже выбирали этот стол! <br/> <br/> Пожалуйста, выберите другой.');
-                    $('#button__reserve').hide();
+                    $('.center button').hide();
                 }
             });
         }
@@ -227,7 +243,7 @@
                 autoClose: 2500,
                 onOpen: function () {
                     $('#number_table').html('В данный момент этот стол бронирует кто то другой. <br/> <br/> Пожалуйста, выберите другой стол.');
-                    $('#button__reserve').hide();
+                    $('.center button').hide();
                 }
             });
         }
@@ -239,17 +255,16 @@
                 autoClose: 2500,
                 onOpen: function () {
                     $('#number_table').html('В данный момент этот стол забронирован. <br/> <br/> Пожалуйста, выберите другой стол.');
-                    $('#button__reserve').hide();
+                    $('.center button').hide();
                 }
             });
         }
 
         function CheckingNumberTablesInCart(item) {
             $.ajax({
-                url: '@Url.Action("CheckingNumberTablesInCart")',
-                type: 'GET'
-            }).done(function(result) {
-                if (result) {
+                    url: '@Url.Action("CheckingNumberTablesInCart")',
+                    type: 'GET'
+                }).done(function() {
                     if (item.hasClass("inMyCart")) {
                         ShowMessageInMyCart();
                     } else if (item.hasClass("inOtherCart")) {
@@ -258,11 +273,11 @@
                         ShowMessageReserved();
                     } else {
                         ShowReservation(item);
-                    }
-                } else {
-                    ShowErrorMessage();
-                }
-            });
+                    };
+                })
+                .fail(function (error) {
+                    ShowErrorMessage(error.responseText);
+                });
         }
 
         $('.trigger').unbind("click").click(function () {

@@ -1,7 +1,18 @@
 ﻿@model System.Collections.Generic.List<BilliardClub.Models.PoolTable>
 
 <div class="">
-    
+    @foreach (var poolTable in Model)
+    {
+        <ul>
+            №@poolTable.name
+            @foreach (var status in poolTable.statusTables)
+            {
+                <li>
+                    @status.dateStart - @status.dateEnd - @status.status.name
+                </li>
+            }
+        </ul>
+    }
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

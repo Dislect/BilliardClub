@@ -31,12 +31,12 @@ namespace BilliardClub.Models
             var context = services.GetService<Context>();
             string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
             session.SetString("CartId", cartId);
-
             cart = new Cart(context) {cartId = cartId};
+
             return cart;
         }
 
-        public Task AddToCartTable(PoolTable table)
+        public async Task AddToCartTable(PoolTable table, DateTime dateReservation)
         {
             var statusInCart = _context.Status.FirstOrDefault(x => x.name == "В корзине");
 
@@ -44,39 +44,40 @@ namespace BilliardClub.Models
             {
                 table.statusTables.Last().dateEnd = DateTime.Now;
             }
-            table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusInCart });
+            table.statusTables.Add(new StatusTable() { dateStart = dateReservation, status = statusInCart });
 
             _context.CartPoolTables.Add(new CartPoolTable()
             {
                 cartId = cartId,
                 PoolTable = table,
-                numberHours = 1
+                numberHours = 1,
+                reservationDate = dateReservation
             });
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            // удаление стола из корзины через некоторое время и обновление статуса стола
-            var deleteTableInCartTask = Task.Factory.StartNew(() =>
+           await DeleteTableInCartTask(table);
+        }
+
+        private async Task DeleteTableInCartTask(PoolTable table)
+        {
+            await Task.Delay(new TimeSpan(0,1,0));
+
+            if (_context.CartPoolTables.Include(x => x.PoolTable)
+                .Any(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
             {
-                Thread.Sleep(60000);
+                _context.CartPoolTables.Remove(
+                    _context.CartPoolTables.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
 
-                if (_context.CartPoolTables.Include(x => x.PoolTable)
-                    .Any(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
+                var statusFree = _context.Status.First(x => x.name == "Свободен");
+
+                if (table.statusTables.Any())
                 {
-                    _context.CartPoolTables.Remove(_context.CartPoolTables.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
-
-                    var statusFree = _context.Status.First(x => x.name == "Свободен");
-
-                    if (table.statusTables.Any())
-                    {
-                        table.statusTables.Last().dateEnd = DateTime.Now;
-                    }
-
-                    table.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusFree });
-                    _context.SaveChanges();
+                    table.statusTables.Last().dateEnd = DateTime.Now;
                 }
-            });
 
-            return deleteTableInCartTask;
+                table.statusTables.Add(new StatusTable() {dateStart = DateTime.Now, status = statusFree});
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task AddToCartProduct(FoodItem product)

@@ -36,7 +36,8 @@ namespace BilliardClub.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task AddToCartTable(int id)
+        //TODO: добавить обработку ошибок и отправку их в представление
+        public async Task AddToCartTable(int id, DateTime? dateReservation)
         {
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
@@ -48,7 +49,7 @@ namespace BilliardClub.Controllers
                 && table.statusTables.LastOrDefault()?.status.name != "Забронирован"
                 && table.statusTables.LastOrDefault()?.status.name != "В корзине")
             {
-                await _cart.AddToCartTable(table);
+                await _cart.AddToCartTable(table, dateReservation ?? DateTime.Now);
             }
         }
 

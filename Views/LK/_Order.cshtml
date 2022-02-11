@@ -88,18 +88,36 @@
     </div>
 </div>
 
+<div id="element_to_pop_up" style="width: 800px; height: 250px;">
+    <span class="button b-close">
+        <span>X</span>
+    </span>
+    <div class="center">
+        <h2 id="massage"></h2>
+    </div>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 
-    $('.remove__tr__table').unbind("click").click(function () {
+    $('.remove__tr__table').unbind("click").click(function() {
         var tr = $(this).parent().parent();
         var id = $(tr).attr('id');
         $.ajax({
             url: '@Url.Action("DeleteTableInCart", "LK")',
             type: 'POST',
-            data: {id: id}
-        }).done(function() {
-            $(tr).remove();
+            data: { id: id },
+            beforeSend: function () {
+                $(tr).remove();
+            }
+        }).fail(function() {
+            $('element_to_pop_up').bPopup({
+                fadeSpeed: 'slow',
+                followSpeed: 1500,
+                onOpen: function(error) {
+                    $('#massage').text(error.responseText);
+                }
+            });
         });
     });
 
@@ -198,9 +216,8 @@
             type: 'POST',
             beforeSend: function() {
                 alert("Заказ подтвержден");
+                $('.content__block2').load("@Url.Action("_Order")");
             }
-        }).done(function() {
-            $('.content__block2').load("@Url.Action("_Order")");
         });
     });
 </script>
