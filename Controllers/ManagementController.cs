@@ -72,16 +72,11 @@ namespace BilliardClub.Controllers
 
         #endregion
 
-        #region Types tables and rotation
+        #region Types tables
 
-        public async Task<ActionResult> _TypesTablesAndRotation()
+        public async Task<ActionResult> _TypesTables()
         {
-            var model = new TypeTableAndRotationViewModel()
-            {
-                typeTables = await _context.TypeTables.ToListAsync(),
-                tableRotations = await _context.TableRotations.ToListAsync()
-            };
-            return PartialView(model);
+            return PartialView(await _context.TypeTables.ToListAsync());
         }
 
         public void AddTypeTable(string nameType, uint price)
@@ -117,6 +112,15 @@ namespace BilliardClub.Controllers
                 _context.TypeTables.Remove(typeTable);
                 _context.SaveChanges();
             }
+        }
+
+        #endregion
+
+        #region Rotation
+
+        public async Task<ActionResult> _Rotation()
+        {
+            return PartialView(await _context.TableRotations.ToListAsync());
         }
 
         public void AddTableRotation(int angle)

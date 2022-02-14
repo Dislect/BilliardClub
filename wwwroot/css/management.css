@@ -131,3 +131,9 @@
     background: black;
 }
 /* ReservedTables */
+
+.management__block {
+    min-height: 84vh;
+    padding-left: 30px;
+    padding-top: 6px;
+}
