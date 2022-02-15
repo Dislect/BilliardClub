@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
+using BilliardClub.HangfireService;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,17 +23,21 @@ namespace BilliardClub.Models
         public List<CartFoodItem> CartFoodItems => GetCartFoodItems().Result;
 
         public Cart(Context context)
-        {
-            this._context = context;
+        { 
+            _context = context;
         }
 
         public static Cart GetCart(IServiceProvider services)
         {
-            ISession session = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
-            var context = services.GetService<Context>();
-            string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
-            session.SetString("CartId", cartId);
-            cart = new Cart(context) {cartId = cartId};
+            var httpContext = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext;
+            if (httpContext != null)
+            {
+                ISession session = httpContext?.Session;
+                var context = services.GetService<Context>();
+                string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
+                session.SetString("CartId", cartId);
+                cart = new Cart(context) {cartId = cartId};
+            }
 
             return cart;
         }
@@ -53,31 +59,13 @@ namespace BilliardClub.Models
                 numberHours = 1,
                 reservationDate = dateReservation
             });
+
+            // создание работы на удалени стола из корзины
+            BackgroundJob.Schedule(() => CartService.Instance.DeleteTableInCartJob(table.id, cartId),
+                // время до начала работы
+                new TimeSpan(0, 1, 0));
+
             await _context.SaveChangesAsync();
-
-           await DeleteTableInCartTask(table);
-        }
-
-        private async Task DeleteTableInCartTask(PoolTable table)
-        {
-            await Task.Delay(new TimeSpan(0,1,0));
-
-            if (_context.CartPoolTables.Include(x => x.PoolTable)
-                .Any(x => x.PoolTable != null && x.PoolTable.id == table.id && cartId == x.cartId))
-            {
-                _context.CartPoolTables.Remove(
-                    _context.CartPoolTables.First(x => x.PoolTable.id == table.id && cartId == x.cartId));
-
-                var statusFree = _context.Status.First(x => x.name == "Свободен");
-
-                if (table.statusTables.Any())
-                {
-                    table.statusTables.Last().dateEnd = DateTime.Now;
-                }
-
-                table.statusTables.Add(new StatusTable() {dateStart = DateTime.Now, status = statusFree});
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task AddToCartProduct(FoodItem product)
