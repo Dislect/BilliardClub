@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using BilliardClub.App_Data;
 using BilliardClub.HangfireService;
 using BilliardClub.Models;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -61,7 +63,8 @@ namespace BilliardClub
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sp => Cart.GetCart(sp));
-            services.AddTransient(sp => CartService.GetCartService(sp));
+            services.AddTransient<CartService>();
+            services.AddTransient<OrderService>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson(options =>
                 options.SerializerSettings.PreserveReferencesHandling  = Newtonsoft.Json.PreserveReferencesHandling.Objects

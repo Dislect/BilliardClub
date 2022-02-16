@@ -10,20 +10,11 @@ namespace BilliardClub.HangfireService
 {
     public class CartService
     {
-        private Context _context;
-        private static CartService _cartService;
+        private readonly Context _context;
 
-        public static CartService Instance => _cartService ??= new CartService();
-
-        public static CartService GetCartService(IServiceProvider services)
+        public CartService(Context context)
         {
-            var context = services.GetService<Context>();
-            _cartService = new CartService()
-            {
-                _context = context
-            };
-
-            return _cartService;
+            _context = context;
         }
 
         public async Task DeleteTableInCartJob(int tableId, string cartId)
@@ -35,7 +26,7 @@ namespace BilliardClub.HangfireService
 
             if (table == null)
             {
-                return;
+                throw new Exception($"Не найден стол id-{tableId} для удаления из корзины id-{cartId}");
             }
 
             if (_context.CartPoolTables.Include(x => x.PoolTable)

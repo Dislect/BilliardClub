@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
+using BilliardClub.HangfireService;
 using BilliardClub.Models;
 using BilliardClub.Models.Extensions;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -131,6 +133,7 @@ namespace BilliardClub.Controllers
                                     status = statusReservOnDate
                                 });
 
+                            CreateReservJob(tableInCart);
                             _cart.DeleteTableInCart(tableInCart.PoolTable);
                         }
                         else
@@ -148,6 +151,9 @@ namespace BilliardClub.Controllers
                                 dateEnd = tableInCart.reservationDate.AddHours(tableInCart.numberHours),
                                 status = statusReserve
                             });
+
+                            CreateJob(tableInCart);
+                            _cart.DeleteTableInCart(tableInCart.PoolTable);
                         }
 
                         order.poolTables.Add(new OrderPoolTable()
@@ -175,8 +181,7 @@ namespace BilliardClub.Controllers
                 order.cheque = cheque;
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
-                await ReservationTableOnDate(tablesInCart);
-
+                
                 return Ok();
             }
             return BadRequest("В корзине отсутствуют бильярдные столы и еда");
@@ -189,10 +194,17 @@ namespace BilliardClub.Controllers
                 .ThenInclude(x => x.status)
                 .Where(x => x.statusTables.Any(s => s.status.name == "Забронирован к дате"));
 
+            if (!tables.Any())
+            {
+                return true;
+            }
+
             foreach (var table in tables)
             {
                 foreach (var statusReserve in table.statusTables.Where(x => x.status.name == "Забронирован к дате"))
                 {
+                    if (tableInCart.reservationDate.DayOfYear != statusReserve.dateStart.DayOfYear) continue;
+
                     var newDateReserv = tableInCart.reservationDate.AddHours(tableInCart.numberHours).TimeOfDay;
 
                     if (newDateReserv.IsBetween(statusReserve.dateStart.TimeOfDay, statusReserve.dateEnd?.TimeOfDay))
@@ -204,53 +216,23 @@ namespace BilliardClub.Controllers
             return true;
         }
 
-        private async Task ReservationTableOnDate(List<CartPoolTable> tablesInCart)
+        private void CreateReservJob(CartPoolTable tableInCart)
         {
-            foreach (var tableInCart in tablesInCart)
-            {
-                await AwaitToDateReservation(tableInCart);
-            }
+            // создание задачи на бронирование стола к определенной дате
+            BackgroundJob.Schedule<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id),
+                tableInCart.reservationDate);
+
+            BackgroundJob.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
+                tableInCart.reservationDate.AddHours(tableInCart.numberHours));
         }
 
-        private async Task AwaitToDateReservation(CartPoolTable tableInCart)
+        private void CreateJob(CartPoolTable tableInCart)
         {
-            var time = tableInCart.reservationDate - DateTime.Now;
-            time = time < TimeSpan.Zero ? TimeSpan.Zero : time;
-            await Task.Delay(time);
+            // моментальное бронирование
+            BackgroundJob.Enqueue<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id));
 
-            var statusReserve = _context.Status.FirstOrDefault(x => x.name == "Забронирован");
-
-            if (tableInCart.PoolTable.statusTables.Any())
-            {
-                tableInCart.PoolTable.statusTables.Last().dateEnd = DateTime.Now;
-            }
-
-            tableInCart.PoolTable.statusTables.Add(new StatusTable()
-            {
-                dateStart = DateTime.Now,
-                status = statusReserve
-            });
-
-            await _context.SaveChangesAsync();
-
-            // создание задачи на освобождение стола от бронирования
-            await DeleteReservationTable(tableInCart);
-        }
-
-        private async Task DeleteReservationTable(CartPoolTable tableInCart)
-        {
-            var time = tableInCart.reservationDate.AddHours(tableInCart.numberHours) - DateTime.Now;
-            await Task.Delay(time);
-
-            var statusFree = _context.Status.First(x => x.name == "Свободен");
-
-            if (tableInCart.PoolTable.statusTables.Any())
-            {
-                tableInCart.PoolTable.statusTables.Last().dateEnd = DateTime.Now;
-            }
-
-            tableInCart.PoolTable.statusTables.Add(new StatusTable() { dateStart = DateTime.Now, status = statusFree });
-            await _context.SaveChangesAsync();
+            BackgroundJob.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
+                tableInCart.reservationDate.AddHours(tableInCart.numberHours));
         }
 
         #endregion

@@ -36,28 +36,43 @@ namespace BilliardClub.Controllers
 
         [HttpPost]
         [Authorize]
-        //TODO: добавить обработку ошибок и отправку их в представление
-        public async Task AddToCartTable(int id, DateTime? dateReservation)
+        public async Task<IActionResult> AddToCartTable(int id, DateTime? dateReservation)
         {
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
                 .ThenInclude(x => x.status)
                 .FirstOrDefault(x => x.id == id);
 
-            if (table != null
-                && !_cart.CartPoolTables.Exists(x => x.PoolTable != null && x.PoolTable.id == id)
-                && table.statusTables.LastOrDefault()?.status.name != "Забронирован"
-                && table.statusTables.LastOrDefault()?.status.name != "В корзине")
+            if (table == null)
             {
-                await _cart.AddToCartTable(table, dateReservation ?? DateTime.Now);
+                return BadRequest("Не найден стол для бронирования");
             }
+
+            if (_cart.CartPoolTables.Exists(x => x.PoolTable != null && x.PoolTable.id == id))
+            {
+                return BadRequest("Стол уже находится в корзине");
+            }
+
+            if (table.statusTables.LastOrDefault()?.status.name == "Забронирован")
+            {
+                return BadRequest("Данный стол уже забронирован");
+            }
+
+            if (table.statusTables.LastOrDefault()?.status.name == "В корзине")
+            {
+                return BadRequest("Данный стол уже кто-то заказывает");
+            }
+
+            await _cart.AddToCartTable(table, dateReservation ?? DateTime.Now);
+            return Ok();
         }
 
         [HttpGet]
         [Authorize]
         public bool CheckingNumberTablesInCart()
         {
-            return _cart.CartPoolTables.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < 2;
+            int maxCountTablesInCart = 2;
+            return _cart.CartPoolTables.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < maxCountTablesInCart;
         }
 
         #endregion

@@ -61,7 +61,7 @@ namespace BilliardClub.Models
             });
 
             // создание работы на удалени стола из корзины
-            BackgroundJob.Schedule(() => CartService.Instance.DeleteTableInCartJob(table.id, cartId),
+            BackgroundJob.Schedule<CartService>(x => x.DeleteTableInCartJob(table.id, cartId),
                 // время до начала работы
                 new TimeSpan(0, 1, 0));
 
