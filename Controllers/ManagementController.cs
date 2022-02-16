@@ -125,17 +125,19 @@ namespace BilliardClub.Controllers
             return PartialView(await _context.TableRotations.ToListAsync());
         }
 
-        public void AddTableRotation(int angle)
+        public void AddTableRotation()
         {
-            if (!_context.TableRotations.Any(x => x.rotationAngle == angle))
+            _context.TableRotations.Add(new TableRotation()
             {
-                _context.TableRotations.Add(new TableRotation()
-                {
-                    rotationAngle = angle
-                });
+                rotationAngle = 0
+            });
 
-                _context.SaveChanges();
-            }
+            _context.SaveChanges();
+        }
+
+        public TableRotation GetTableRotationInfo(int idTableRotation)
+        {
+            return _context.TableRotations.FirstOrDefault(x => x.id == idTableRotation);
         }
 
         public void ChangeTableRotation(int idTableRotation, int newAngle)
