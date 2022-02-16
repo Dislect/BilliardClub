@@ -340,8 +340,6 @@ else
                 $('#tableId').text(table.id);
                 $('#typeId option[value="'+ table.idTypeTable +'"]').prop('selected', true);
                 $('#rotationId option[value="' + table.idTableRotation + '"]').prop('selected', true);
-                console.log(table.idStatus);
-                console.log(table.idStatus != -1);
                 if (table.idStatus != -1) {
                     $('#statusId option[value="' + table.idStatus + '"]').prop('selected', true);
                 } else {
@@ -438,7 +436,7 @@ else
                                     data: {
                                         'tableId': $('#tableId').text()
                                     }
-                                }).done(function() {
+                                }).done(function () {
                                     window.location.href = '@Url.Action("Reservation")';
                                 });
                             }

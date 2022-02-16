@@ -79,17 +79,19 @@ namespace BilliardClub.Controllers
             return PartialView(await _context.TypeTables.ToListAsync());
         }
 
-        public void AddTypeTable(string nameType, uint price)
+        public void AddTypeTable()
         {
-            if (!_context.TypeTables.Any(x => x.name == nameType))
+            _context.TypeTables.Add(new TypeTable()
             {
-                _context.TypeTables.Add(new TypeTable()
-                {
-                    name = nameType,
-                    price = price
-                });
-                _context.SaveChanges();
-            }
+                name = "Новый тип",
+                price = 200
+            });
+            _context.SaveChanges();
+        }
+
+        public TypeTable GetTypeTableInfo(int idTypeTable)
+        {
+            return _context.TypeTables.FirstOrDefault(x => x.id == idTypeTable);
         }
 
         public void ChangeTypeTable(int idTypeTable, string newNameType, uint newPrice)

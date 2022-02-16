@@ -1,24 +1,123 @@
 ﻿@model List<BilliardClub.Models.TypeTable>
 
 <div class="management__block">
-    <div class="">
-        <div class="">
-            <table>
-                <thead>
-                    <tr></tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <div class="">
-
-        </div>
+    <h1> Типы столов </h1>
+    <a href="#" id="add_new">Добавить тип стола</a>
+    <div class="center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Тип стола</th>
+                    <th>Цена стола</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var typeTable in Model)
+                {
+                    <tr>
+                        <td>@typeTable.id</td>
+                        <td>@typeTable.name</td>
+                        <td>@typeTable.price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
+<div id="dialog" title="Изменение" style="display: none">
+    <p>
+        id типа:
+        <span id="idTypeTable"></span>
+    </p>
+    <p>
+        Наименование:
+        <input id="newNameType" type="text"/>
+    </p>
+    <p>
+        Цена:
+        <input id="newPrice" min="1" type="number"style="width: 150px"/>
+    </p>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 
 <script>
+    var pencil = $('<img src="/img/pencil.png" class="change"/>').css({
+        'width': '25px',
+        'height': '25px',
+        'position': 'absolute',
+        'background-repeat': 'no-repeat',
+        'background-size': 'contain',
+        'cursor': 'pointer'
+    });
 
+    $(pencil).appendTo($('tbody > tr'));
+
+    $('#add_new').unbind("click").click(function(event) {
+        event.stopPropagation();
+        $.ajax({
+            url: '@Url.Action("AddTypeTable")',
+            type: 'POST'
+        }).done(function () {
+            $('.content__block2').load("@Url.Action("_TypesTables")");
+        });
+    });
+
+    $('.change').unbind("click").click(function () {
+        var tr = $(this).parent();
+        var id = $(tr).find('td:first').text();
+        ChangeDialog(id);
+        $("#dialog").dialog({
+            resizable: 'false',
+            width: '400px',
+            minHeight: '800px',
+            buttons: [{
+                    text: "Удалить тип стола", click: function () {
+                        $.ajax({
+                            url: "@Url.Action("DeleteTypeTable")",
+                            type: "POST",
+                            data: {
+                                'idTypeTable': $('#idTypeTable').text()
+                            }
+                        }).done(function () {
+                            $('.content__block2').load("@Url.Action("_TypesTables")");
+                            $('#dialog').dialog("close");
+                        });
+                    }
+                },
+                {
+                    text: "Сохранить", click: function () {
+                        $.ajax({
+                            url: '@Url.Action("ChangeTypeTable")',
+                            data: {
+                                'idTypeTable': $('#idTypeTable').text(),
+                                'newNameType': $('#newNameType').val(),
+                                'newPrice': $('#newPrice').val()
+                            },
+                            type: 'POST'
+                        }).done(function () {
+                            $('.content__block2').load("@Url.Action("_TypesTables")");
+                            $('#dialog').dialog("close");
+                        });
+                    }
+                }]
+        });
+    });
+
+    function ChangeDialog(id)
+    {
+        $.ajax({
+            url: '@Url.Action("GetTypeTableInfo")',
+            data: { idTypeTable: id},
+            type: 'GET'
+        }).done(function (typeTable) {
+            $('#idTypeTable').text(typeTable.id);
+            $('#newNameType').val(typeTable.name);
+            $('#newPrice').val(typeTable.price);
+        });
+    }
 </script>
