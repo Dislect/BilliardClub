@@ -150,13 +150,14 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="~/js/jquery.bpopup.min.js"></script>
+<script>
+    $('#date_reservation').hide();
+    $('.checkbox_container').hide();
+</script>
 
 @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
 {
     <script>
-        $('#date_reservation').hide();
-        $('.checkbox_container').hide();
-
         $('#date_on').click(function(){
             if ($(this).is(':checked')){
                 $('#date_reservation').show(100);
