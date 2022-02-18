@@ -19,12 +19,15 @@
         <p>
             <span>Номер телефона:</span> @Model.PhoneNumber
         </p>
-        <p>
-            <a id="change_password_href">Изменение пароля для пользователя @Model.firstName</a>
-        </p>
-        <p>
-            <a id="change_email_href">Изменение почты @Model.Email</a>
-        </p>
+        @if (!User.IsInRole("employee"))
+        {
+            <p>
+                <a id="change_password_href">Изменение пароля для пользователя @Model.firstName</a>
+            </p>
+            <p>
+                <a id="change_email_href">Изменение почты @Model.Email</a>
+            </p>   
+        }
     </div>
 </div>
 
