@@ -249,6 +249,7 @@ namespace BilliardClub.Controllers
                 .ThenInclude(x => x.typeTable)
                 .Include(x => x.orders)
                 .ThenInclude(x => x.foodItems)
+                .ThenInclude(x => x.foodItem)
                 .ToList();
 
             return PartialView(model);

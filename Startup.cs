@@ -8,8 +8,8 @@ using BilliardClub.App_Data;
 using BilliardClub.HangfireService;
 using BilliardClub.Models;
 using Hangfire;
-using Hangfire.Dashboard;
 using Hangfire.SqlServer;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -90,7 +90,16 @@ namespace BilliardClub
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseHangfireDashboard("/adm");
+            app.UseHangfireDashboard("/adm", new DashboardOptions()
+            {
+                Authorization = new[]
+                {
+                    new HangfireCustomBasicAuthenticationFilter{
+                        User = "admin",
+                        Pass = "admin"
+                    }
+                }
+            });
 
             app.UseEndpoints(endpoints =>
             {

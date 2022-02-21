@@ -1,7 +1,54 @@
 ﻿@model System.Collections.Generic.List<BilliardClub.Models.User>
 
 <div class="management__block">
-
+    <h1> Заказы пользователей </h1>
+    <div>
+        @foreach (var user in Model)
+        {
+            <h2>@user.firstName @user.lastName</h2>
+            <div class="center">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>Id</td>
+                            <td>Дата заказа</td>
+                            <td>Забронированные столы</td>
+                            <td>Заказанная еда/напитки</td>
+                            <td>Сумма заказа</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in user.orders)
+                        {
+                            <tr>
+                                <td>@order.id</td>
+                                <td>@order.orderDate</td>
+                                <td>
+                                    @foreach (var poolTable in order.poolTables)
+                                    {
+                                        <p>
+                                            №@poolTable.poolTable.name -
+                                            @poolTable.numberHours ч.
+                                        </p>
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var foodItem in order.foodItems)
+                                    {
+                                        <p>
+                                            @foodItem.foodItem.title
+                                            @foodItem.quantity шт.
+                                        </p>
+                                    }
+                                </td>
+                                <td>@order.cheque</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
