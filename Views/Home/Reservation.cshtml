@@ -75,6 +75,9 @@
     <div id="pop_up_body" style="display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column">
         <div class="center">
             <h2 id="number_table"></h2>
+            <div id="preloader">
+                <img src="~/img/preloader.gif"/>
+            </div>
         </div>
         <input id="date_reservation" type="datetime-local">
         <div class="center">
@@ -153,18 +156,19 @@
 <script>
     $('#date_reservation').hide();
     $('.checkbox_container').hide();
+    var preloader = $('#preloader').hide();
 </script>
 
 @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
 {
-    <script>
+<script>
         $('#date_on').click(function(){
             if ($(this).is(':checked')){
                 $('#date_reservation').show(100);
             } else {
                 $('#date_reservation').hide(100);
             }
-        });  
+        });
 
         function ShowReservation(This) {
             var id = $(".id", This).val();
@@ -200,14 +204,24 @@
                     },
                     type: 'POST',
                     beforeSend: function () {
+                        $('#number_table').html('');
+                        $('#button__reserve').hide();
+                        preloader.fadeIn();
+                    },
+                    complete: function () {
+                        preloader.hide();
+                    }
+                })
+                    .done(function () {
+                        $('#button__reserve').show(50);
                         $('#number_table').html('Стол добавлен в список бронирования!' +
                             '</br> </br> Вы можете подтвердить бронирование в личном кабинете, или выбрать еще 1 стол.');
-                        $('#button__reserve').text('Перейти в личный кабинет').click(function() {
+                        This.addClass('inMyCart');
+                        $('#button__reserve').text('Перейти в личный кабинет').unbind("click").click(function() {
                             window.location.href = '@Url.Action("Info", "LK")';
                         });
-                        This.addClass('inMyCart');
-                    }
-                }).fail(function (error) {
+                    })
+                    .fail(function (error) {
                     $('#number_table').html(error.responseText);
                     $('.center button').hide();
                 });
@@ -263,9 +277,16 @@
 
         function CheckingNumberTablesInCart(item) {
             $.ajax({
-                    url: '@Url.Action("CheckingNumberTablesInCart")',
-                    type: 'GET'
-                }).done(function() {
+                url: '@Url.Action("CheckingNumberTablesInCart")',
+                type: 'GET',
+                beforeSend: function () {
+                    $('#number_table').html('');
+                    preloader.fadeIn();
+                },
+                complete: function () {
+                    preloader.hide();
+                }
+            }).done(function () {
                     if (item.hasClass("inMyCart")) {
                         ShowMessageInMyCart();
                     } else if (item.hasClass("inOtherCart")) {
@@ -285,7 +306,7 @@
             CheckingNumberTablesInCart($(this));
         });
 
-    </script>
+</script>
 }
 else
 {
