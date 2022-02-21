@@ -43,13 +43,15 @@ namespace BilliardClub.Controllers
         }
 
         [HttpPost]
-        public void DeleteTableInCart(int id)
+        public IActionResult DeleteTableInCart(int id)
         {
             if (_cart.CartPoolTables.Exists(x => x.PoolTable != null && x.PoolTable.id == id))
             {
                 var table = _context.PoolTables.FirstOrDefault(x => x.id == id);
                 _cart.DeleteTableInCart(table);
+                return Ok();
             }
+            return BadRequest("Стол не находится в корзине");
         }
 
         [HttpPost]
@@ -175,6 +177,7 @@ namespace BilliardClub.Controllers
                             foodItem = productInCart.FoodItem,
                             quantity = productInCart.quantity
                         });
+                        _cart.DeleteProductInCart(productInCart.FoodItem);
                     }
                 }
 

@@ -92,13 +92,20 @@
     <span class="button b-close">
         <span>X</span>
     </span>
-    <div class="center">
-        <h2 id="massage"></h2>
+    <div id="pop_up_body" style="display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column">
+        <div class="center">
+            <h2 id="massage"></h2>
+            <div id="preloader">
+                <img src="~/img/preloader.gif" />
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/js/jquery.bpopup.min.js"></script>
+
+    <script>
 
     $('.remove__tr__table').unbind("click").click(function() {
         var tr = $(this).parent().parent();
@@ -109,12 +116,13 @@
             data: { id: id },
             beforeSend: function () {
                 $(tr).remove();
+                $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
             }
-        }).fail(function() {
-            $('element_to_pop_up').bPopup({
+        }).fail(function (error) {
+            $('#element_to_pop_up').bPopup({
                 fadeSpeed: 'slow',
                 followSpeed: 1500,
-                onOpen: function(error) {
+                onOpen: function() {
                     $('#massage').text(error.responseText);
                 }
             });
@@ -130,11 +138,12 @@
             data: {id: id}
         }).done(function() {
             $(tr).remove();
+            $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
         });
     });
 
-    $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
     $('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input[type="number"]');
+    $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
     $('.quantity').each(function() {
         var spinner = $(this),
             input = spinner.find('input[type="number"]'),
@@ -168,7 +177,7 @@
 
     function SumOrderPrice() {
         var sum = 0;
-        $('.position').each(function() {
+        $('.position_table, .position_food').each(function() {
             var rowPosition = $(this),
                 price = rowPosition.find('.price').text(),
                 quantity = rowPosition.find('input[type="number"]').val();
@@ -207,18 +216,35 @@
         });
     }
 
-    $('#submit__order').unbind("click").click(function () {
+    var preloader = $('#preloader').hide();
+    $('#submit__order').unbind("click").click(function() {
         UpdateProductQuantity();
         UpdateTableNumberHours();
         $('#sumPrice').text('Сумма заказа ' + SumOrderPrice() + ' руб.');
-        $.ajax({
-            url: '@Url.Action("ConfirmOrder")',
-            type: 'POST',
-            beforeSend: function() {
-                alert("Заказ подтвержден");
-                $('.content__block2').load("@Url.Action("_Order")");
-            }
-        });
+            $.ajax({
+                url: '@Url.Action("ConfirmOrder")',
+                type: 'POST',
+                beforeSend: function () {
+                    $('#element_to_pop_up').bPopup({
+                        fadeSpeed: 'slow',
+                        followSpeed: 1500,
+                        onOpen: function () {
+                            $('#massage').html('');
+                        }
+                    });
+                    preloader.fadeIn();
+                },
+                complete: function () {
+                    preloader.hide();
+                }
+            })
+            .done(function () {
+                $('#massage').html('Заказ успешно подтвержден!');
+                $('.content__block2').load('@Url.Action("_Order")').delay('fast');
+            })
+            .fail(function (error) {
+                $('#massage').text(error.responseText);
+            });
     });
-</script>
+    </script>
 
