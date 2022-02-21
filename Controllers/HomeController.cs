@@ -69,10 +69,14 @@ namespace BilliardClub.Controllers
 
         [HttpGet]
         [Authorize]
-        public bool CheckingNumberTablesInCart()
+        public IActionResult CheckingNumberTablesInCart()
         {
             int maxCountTablesInCart = 2;
-            return _cart.CartPoolTables.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < maxCountTablesInCart;
+            if (_cart.CartPoolTables.Count(x => x.PoolTable != null && x.cartId == _cart.cartId) < maxCountTablesInCart)
+            {
+                return Ok();
+            }
+            return BadRequest("Пользователь может забронировать не более 2-х столов за раз!");
         }
 
         #endregion
