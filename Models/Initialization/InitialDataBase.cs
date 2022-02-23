@@ -287,6 +287,11 @@ namespace BilliardClub.Models.Initialization
                     new Status()
                     {
                         name = "Свободен"
+                    },
+
+                    new Status()
+                    {
+                        name = "Забронирован к дате"
                     }
                 );
             }

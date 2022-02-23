@@ -110,12 +110,15 @@ namespace BilliardClub.Controllers
                 {
                     foreach (var tableInCart in tablesInCart)
                     {
-                        if (!CheckReservationOverlay(tableInCart))
+                        if (tableInCart.reservationDate.AddMinutes(2) < DateTime.Now)
                         {
-                            return BadRequest($"Стол №{ tableInCart.PoolTable.name } уже забронирован на эту дату и время");
+                            return BadRequest($"Нельзя забронировать стол №{tableInCart.PoolTable.name} на прошедшее время.");
                         }
 
-                        cheque += tableInCart.numberHours * tableInCart.PoolTable.typeTable.price;
+                        if (IsSuperimposedOnReservedTime(tableInCart))
+                        {
+                            return BadRequest($"Стол №{tableInCart.PoolTable.name} уже забронирован на эту дату и время.");
+                        }
 
                         if (tableInCart.reservationDate.AddMinutes(-5) > DateTime.Now)
                         {
@@ -129,11 +132,11 @@ namespace BilliardClub.Controllers
                             }
 
                             tableInCart.PoolTable.statusTables.Add(new()
-                                {
-                                    dateStart = DateTime.Now,
-                                    dateEnd = DateTime.Now,
-                                    status = statusReservOnDate
-                                });
+                            {
+                                dateStart = tableInCart.reservationDate,
+                                dateEnd = tableInCart.reservationDate.AddHours(tableInCart.numberHours),
+                                status = statusReservOnDate
+                            });
 
                             CreateReservJob(tableInCart);
                             _cart.DeleteTableInCart(tableInCart.PoolTable);
@@ -157,6 +160,8 @@ namespace BilliardClub.Controllers
                             CreateJob(tableInCart);
                             _cart.DeleteTableInCart(tableInCart.PoolTable);
                         }
+
+                        cheque += tableInCart.numberHours * tableInCart.PoolTable.typeTable.price;
 
                         order.poolTables.Add(new OrderPoolTable()
                         {
@@ -190,33 +195,33 @@ namespace BilliardClub.Controllers
             return BadRequest("В корзине отсутствуют бильярдные столы и еда");
         }
 
-        private bool CheckReservationOverlay(CartPoolTable tableInCart)
+        private bool IsSuperimposedOnReservedTime(CartPoolTable tableInCart)
         {
-            var tables = _context.PoolTables
+            var statuses = _context.PoolTables
                 .Include(x => x.statusTables)
                 .ThenInclude(x => x.status)
-                .Where(x => x.statusTables.Any(s => s.status.name == "Забронирован к дате"));
+                .First(x => x.id == tableInCart.PoolTable.id)
+                .statusTables.Where(x => x.status.name == "Забронирован к дате" && x.dateStart > DateTime.Now)
+                .ToList();
 
-            if (!tables.Any())
+            if (!statuses.Any())
             {
-                return true;
+                return false;
             }
 
-            foreach (var table in tables)
+            foreach (var statusReserve in statuses)
             {
-                foreach (var statusReserve in table.statusTables.Where(x => x.status.name == "Забронирован к дате"))
+                if (tableInCart.reservationDate.DayOfYear != statusReserve.dateStart.DayOfYear) continue;
+
+                var newDateReserv = tableInCart.reservationDate.AddHours(tableInCart.numberHours).TimeOfDay;
+
+                if (newDateReserv.IsBetween(statusReserve.dateStart.TimeOfDay, statusReserve.dateEnd?.TimeOfDay))
                 {
-                    if (tableInCart.reservationDate.DayOfYear != statusReserve.dateStart.DayOfYear) continue;
-
-                    var newDateReserv = tableInCart.reservationDate.AddHours(tableInCart.numberHours).TimeOfDay;
-
-                    if (newDateReserv.IsBetween(statusReserve.dateStart.TimeOfDay, statusReserve.dateEnd?.TimeOfDay))
-                    {
-                        return false;
-                    }
+                    return true;
                 }
             }
-            return true;
+
+            return false;
         }
 
         private void CreateReservJob(CartPoolTable tableInCart)

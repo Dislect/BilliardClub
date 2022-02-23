@@ -3,32 +3,31 @@
 <div class="management__block">
     @foreach (var poolTable in Model)
     {
-        <h2>№@poolTable.name</h2>
-        <hr />
-        <div class="center">
-            @if (poolTable.statusTables.Any())
-            {
+        @if (poolTable.statusTables.Any())
+        {
+            <h2 align="center">№@poolTable.name</h2>
+            <div class="center">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <td>Статус</td>
-                            <td>Время начала</td>
-                            <td>Время окончания</td>
-                        </tr>
+                    <tr>
+                        <td>Статус</td>
+                        <td>Время начала</td>
+                        <td>Время окончания</td>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var status in poolTable.statusTables)
-                        {
-                            <tr>
-                                <td>@status.status.name</td>
-                                <td>@status.dateStart</td>
-                                <td>@status.dateEnd</td>
-                            </tr>
-                        }
+                    @foreach (var status in poolTable.statusTables)
+                    {
+                        <tr>
+                            <td>@status.status.name</td>
+                            <td>@status.dateStart</td>
+                            <td>@status.dateEnd</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
-            }
-        </div>
+            </div>
+        }
     }
 </div>
 
