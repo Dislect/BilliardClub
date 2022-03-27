@@ -7,7 +7,7 @@ namespace BilliardClub.Models
     {
         public int id { get; set; }
         public DateTime orderDate { get; set; }
-        public double cheque { get; set; }
+        public double receipt { get; set; }
         public User user { get; set; }
         public List<OrderFoodItem> foodItems { get; set; } = new();
         public List<OrderPoolTable> poolTables { get; set; } = new();

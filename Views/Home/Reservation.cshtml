@@ -352,24 +352,30 @@ else
             });
         });
 
-        function ChangeDialog(id)
-        {
+        function ChangeDialog(table) {
+            $('#tableId').text(table.id);
+            $('#typeId option[value="'+ table.idTypeTable +'"]').prop('selected', true);
+            $('#rotationId option[value="' + table.idTableRotation + '"]').prop('selected', true);
+            if (table.idStatus != -1) {
+                $('#statusId option[value="' + table.idStatus + '"]').prop('selected', true);
+            } else {
+                $('#statusId option:first').prop('selected', true);
+            }
+            $('#number').val(table.name);
+            $('#tableX').val(table.tableX);
+            $('#tableY').val(table.tableY);
+        }
+
+        function DialogAction(id) {
             $.ajax({
                 url: '@Url.Action("GetTableInfo")',
                 data: {tableId: id},
                 type: 'GET'
             }).done(function (table) {
-                $('#tableId').text(table.id);
-                $('#typeId option[value="'+ table.idTypeTable +'"]').prop('selected', true);
-                $('#rotationId option[value="' + table.idTableRotation + '"]').prop('selected', true);
-                if (table.idStatus != -1) {
-                    $('#statusId option[value="' + table.idStatus + '"]').prop('selected', true);
-                } else {
-                    $('#statusId option:first').prop('selected', true);
-                }
-                $('#number').val(table.name);
-                $('#tableX').val(table.tableX);
-                $('#tableY').val(table.tableY);
+                ChangeDialog(table);
+                ShowDialog();
+            }).fail(function (error) {
+                ShowErrorMessage(error.responseText);
             });
         }
 
@@ -444,8 +450,12 @@ else
 
             btnChange.click(function (event) {
                 event.stopPropagation();
-                ChangeDialog(tableblock.find('.id').val());
-                $("#dialog").dialog({
+                DialogAction(tableblock.find('.id').val());
+            });
+        });
+
+        function ShowDialog () {
+            $("#dialog").dialog({
                     resizable: 'false',
                     width: '350px',
                     minHeight: '800px',
@@ -477,15 +487,15 @@ else
                                         'statusId': $('#statusId').val()
                                     },
                                     type: 'POST'
-                                }).done(function () {
+                                }).done(function() {
                                     window.location.href = '@Url.Action("Reservation")';
+                                }).fail(function (error) {
+                                    ShowErrorMessage(error.responseText);
                                 });
                             }
                         }
                     ]
                 });
-            });
-        });
-
+        }
     </script>
 }

@@ -85,7 +85,7 @@ namespace BilliardClub.Controllers
 
         [HttpGet]
         [Authorize(Roles = "employee")]
-        public PoolTable GetTableInfo(int tableId)
+        public IActionResult GetTableInfo(int tableId)
         {
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
@@ -104,15 +104,15 @@ namespace BilliardClub.Controllers
                 else
                     table.idStatus = -1;
 
-                return table;
+                return Ok(table);
             }
 
-            return null;
+            return BadRequest("Не найден бильярдный стол!");
         }
 
         [HttpPost]
         [Authorize(Roles = "employee")]
-        public void UpdatePoolTable(int tableId, int typeId, int rotationId, string number, int tableX, int tableY, int statusId)
+        public IActionResult UpdatePoolTable(int tableId, int typeId, int rotationId, string number, int tableX, int tableY, int statusId)
         {
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
@@ -120,8 +120,19 @@ namespace BilliardClub.Controllers
 
             if (table != null)
             {
-                table.tableRotation = _context.TableRotations.FirstOrDefault(x => x.id == rotationId);
-                table.typeTable = _context.TypeTables.FirstOrDefault(x => x.id == typeId);
+                var rotation = _context.TableRotations.FirstOrDefault(x => x.id == rotationId);
+                if (rotation is null)
+                {
+                    return BadRequest("Не найден тип вращения");
+                }
+                table.tableRotation = rotation;
+
+                var typeTable = _context.TypeTables.FirstOrDefault(x => x.id == typeId);
+                if (typeTable is null)
+                {
+                    return BadRequest("Не найден тип стола");
+                }
+                table.typeTable = typeTable;
 
                 var status = _context.Status.FirstOrDefault(x => x.id == statusId);
                 if (status != null)
@@ -138,14 +149,21 @@ namespace BilliardClub.Controllers
                 table.tableY = tableY;
 
                 _context.SaveChanges();
+                return Ok();
             }
+
+            return BadRequest("Не найден бильярдный стол для изменения!");
         }
 
         [HttpPost]
         [Authorize(Roles = "employee")]
         public void DeletePoolTableInPlan(int tableId)
         {
-            var table = _context.PoolTables.FirstOrDefault(x => x.id == tableId);
+            var table = _context.PoolTables
+                .Include(x => x.statusTables)
+                .Include(x => x.orders)
+                .FirstOrDefault(x => x.id == tableId);
+
             if (table != null)
             {
                 _context.PoolTables.Remove(table);

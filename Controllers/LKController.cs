@@ -101,7 +101,7 @@ namespace BilliardClub.Controllers
             if (_cart.CartPoolTables.Any()
                 || _cart.CartFoodItems.Any())
             {
-                double cheque = 0;
+                double receipt = 0;
                 var order = new Order() { orderDate = DateTime.Now, user = await _userManager.GetUserAsync(User) };
                 var tablesInCart = _cart.CartPoolTables;
                 var productsInCart = _cart.CartFoodItems;
@@ -161,7 +161,7 @@ namespace BilliardClub.Controllers
                             _cart.DeleteTableInCart(tableInCart.PoolTable);
                         }
 
-                        cheque += tableInCart.numberHours * tableInCart.PoolTable.typeTable.price;
+                        receipt += tableInCart.numberHours * tableInCart.PoolTable.typeTable.price;
 
                         order.poolTables.Add(new OrderPoolTable()
                         {
@@ -175,7 +175,7 @@ namespace BilliardClub.Controllers
                 {
                     foreach (var productInCart in productsInCart)
                     {
-                        cheque += productInCart.quantity * productInCart.FoodItem.price;
+                        receipt += productInCart.quantity * productInCart.FoodItem.price;
 
                         order.foodItems.Add(new OrderFoodItem()
                         {
@@ -186,7 +186,7 @@ namespace BilliardClub.Controllers
                     }
                 }
 
-                order.cheque = cheque;
+                order.receipt = receipt;
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
                 

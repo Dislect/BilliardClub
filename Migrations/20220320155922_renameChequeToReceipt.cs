@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BilliardClub.Migrations
 {
-    public partial class addtables : Migration
+    public partial class renameChequeToReceipt : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -217,7 +217,7 @@ namespace BilliardClub.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     orderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    cheque = table.Column<double>(type: "float", nullable: false),
+                    receipt = table.Column<double>(type: "float", nullable: false),
                     userId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -232,6 +232,27 @@ namespace BilliardClub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CartFoodItems",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FoodItemid = table.Column<int>(type: "int", nullable: true),
+                    quantity = table.Column<long>(type: "bigint", nullable: false),
+                    cartId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartFoodItems", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_CartFoodItems_FoodItems_FoodItemid",
+                        column: x => x.FoodItemid,
+                        principalTable: "FoodItems",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PoolTables",
                 columns: table => new
                 {
@@ -240,8 +261,6 @@ namespace BilliardClub.Migrations
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     tableX = table.Column<int>(type: "int", nullable: false),
                     tableY = table.Column<int>(type: "int", nullable: false),
-                    idTypeTable = table.Column<int>(type: "int", nullable: true),
-                    idTableRotation = table.Column<int>(type: "int", nullable: true),
                     typeTableid = table.Column<int>(type: "int", nullable: true),
                     tableRotationid = table.Column<int>(type: "int", nullable: true)
                 },
@@ -290,27 +309,21 @@ namespace BilliardClub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartItems",
+                name: "CartPoolTables",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PoolTableid = table.Column<int>(type: "int", nullable: true),
-                    FoodItemid = table.Column<int>(type: "int", nullable: true),
-                    quantity = table.Column<long>(type: "bigint", nullable: false),
+                    numberHours = table.Column<long>(type: "bigint", nullable: false),
+                    reservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     cartId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => x.id);
+                    table.PrimaryKey("PK_CartPoolTables", x => x.id);
                     table.ForeignKey(
-                        name: "FK_CartItems_FoodItems_FoodItemid",
-                        column: x => x.FoodItemid,
-                        principalTable: "FoodItems",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CartItems_PoolTables_PoolTableid",
+                        name: "FK_CartPoolTables_PoolTables_PoolTableid",
                         column: x => x.PoolTableid,
                         principalTable: "PoolTables",
                         principalColumn: "id",
@@ -325,7 +338,7 @@ namespace BilliardClub.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     poolTableid = table.Column<int>(type: "int", nullable: true),
                     orderid = table.Column<int>(type: "int", nullable: true),
-                    quantity = table.Column<long>(type: "bigint", nullable: false)
+                    numberHours = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -351,9 +364,7 @@ namespace BilliardClub.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     dateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    dateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    idPoolTable = table.Column<int>(type: "int", nullable: true),
-                    idStatus = table.Column<int>(type: "int", nullable: true),
+                    dateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     poolTableid = table.Column<int>(type: "int", nullable: true),
                     statusid = table.Column<int>(type: "int", nullable: true)
                 },
@@ -414,13 +425,13 @@ namespace BilliardClub.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_FoodItemid",
-                table: "CartItems",
+                name: "IX_CartFoodItems_FoodItemid",
+                table: "CartFoodItems",
                 column: "FoodItemid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_PoolTableid",
-                table: "CartItems",
+                name: "IX_CartPoolTables_PoolTableid",
+                table: "CartPoolTables",
                 column: "PoolTableid");
 
             migrationBuilder.CreateIndex(
@@ -487,7 +498,10 @@ namespace BilliardClub.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CartItems");
+                name: "CartFoodItems");
+
+            migrationBuilder.DropTable(
+                name: "CartPoolTables");
 
             migrationBuilder.DropTable(
                 name: "OrderFoodItems");

@@ -96,11 +96,11 @@ namespace BilliardClub.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("cheque")
-                        .HasColumnType("float");
-
                     b.Property<DateTime>("orderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("receipt")
+                        .HasColumnType("float");
 
                     b.Property<string>("userId")
                         .HasColumnType("nvarchar(450)");
@@ -147,10 +147,10 @@ namespace BilliardClub.Migrations
                     b.Property<long>("numberHours")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("orderid")
+                    b.Property<int>("orderid")
                         .HasColumnType("int");
 
-                    b.Property<int?>("poolTableid")
+                    b.Property<int>("poolTableid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
@@ -168,18 +168,6 @@ namespace BilliardClub.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("idOrder")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idTableRotation")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idTypeTable")
-                        .HasColumnType("int");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -232,12 +220,6 @@ namespace BilliardClub.Migrations
 
                     b.Property<DateTime>("dateStart")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("idPoolTable")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idStatus")
-                        .HasColumnType("int");
 
                     b.Property<int?>("poolTableid")
                         .HasColumnType("int");
@@ -540,11 +522,15 @@ namespace BilliardClub.Migrations
                 {
                     b.HasOne("BilliardClub.Models.Order", "order")
                         .WithMany("poolTables")
-                        .HasForeignKey("orderid");
+                        .HasForeignKey("orderid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BilliardClub.Models.PoolTable", "poolTable")
                         .WithMany("orders")
-                        .HasForeignKey("poolTableid");
+                        .HasForeignKey("poolTableid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("order");
 
