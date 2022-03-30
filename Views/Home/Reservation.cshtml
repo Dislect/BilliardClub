@@ -470,6 +470,8 @@ else
                                     }
                                 }).done(function () {
                                     window.location.href = '@Url.Action("Reservation")';
+                                }).fail(function (error) {
+                                    ShowErrorMessage(error.responseText);
                                 });
                             }
                         },

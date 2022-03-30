@@ -15,6 +15,7 @@ namespace BilliardClub.Models
     public class Cart
     {
         private readonly Context _context;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         public static Cart cart;
 
         public string cartId { get; set; }
@@ -22,9 +23,10 @@ namespace BilliardClub.Models
         public List<CartPoolTable> CartPoolTables  => GetCartPoolTables().Result;
         public List<CartFoodItem> CartFoodItems => GetCartFoodItems().Result;
 
-        public Cart(Context context)
+        public Cart(Context context, IBackgroundJobClient backgroundJobClient)
         { 
             _context = context;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public static Cart GetCart(IServiceProvider services)
@@ -34,9 +36,10 @@ namespace BilliardClub.Models
             {
                 ISession session = httpContext?.Session;
                 var context = services.GetService<Context>();
+                var backgroundJob = services.GetService<IBackgroundJobClient>();
                 string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
                 session.SetString("CartId", cartId);
-                cart = new Cart(context) {cartId = cartId};
+                cart = new Cart(context, backgroundJob) {cartId = cartId};
             }
 
             return cart;
@@ -61,7 +64,7 @@ namespace BilliardClub.Models
             });
 
             // создание работы на удалени стола из корзины
-            BackgroundJob.Schedule<CartService>(x => x.DeleteTableInCartJob(table.id, cartId),
+            _backgroundJobClient.Schedule<CartService>(x => x.DeleteTableInCartJob(table.id, cartId),
                 // время до начала работы
                 new TimeSpan(0, 1, 0));
 

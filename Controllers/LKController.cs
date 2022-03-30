@@ -20,12 +20,14 @@ namespace BilliardClub.Controllers
         private readonly Context _context;
         private readonly UserManager<User> _userManager;
         private readonly Cart _cart;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public LKController(Context context, UserManager<User> userManager, Cart cart)
+        public LKController(Context context, UserManager<User> userManager, Cart cart, IBackgroundJobClient backgroundJobClient)
         {
             _context = context;
             _userManager = userManager;
             _cart = cart;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         [HttpGet]
@@ -227,19 +229,19 @@ namespace BilliardClub.Controllers
         private void CreateReservJob(CartPoolTable tableInCart)
         {
             // создание задачи на бронирование стола к определенной дате
-            BackgroundJob.Schedule<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id),
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id),
                 tableInCart.reservationDate);
 
-            BackgroundJob.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
                 tableInCart.reservationDate.AddHours(tableInCart.numberHours));
         }
 
         private void CreateJob(CartPoolTable tableInCart)
         {
             // моментальное бронирование
-            BackgroundJob.Enqueue<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id));
+            _backgroundJobClient.Enqueue<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id));
 
-            BackgroundJob.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
                 tableInCart.reservationDate.AddHours(tableInCart.numberHours));
         }
 

@@ -157,7 +157,7 @@ namespace BilliardClub.Controllers
 
         [HttpPost]
         [Authorize(Roles = "employee")]
-        public void DeletePoolTableInPlan(int tableId)
+        public IActionResult DeletePoolTableInPlan(int tableId)
         {
             var table = _context.PoolTables
                 .Include(x => x.statusTables)
@@ -168,11 +168,12 @@ namespace BilliardClub.Controllers
             {
                 _context.PoolTables.Remove(table);
                 _context.SaveChanges();
+                return Ok();
             }
+
+            return BadRequest("Не найден стол для удаления!");
         }
 
-        [HttpPost]
-        [Authorize(Roles = "employee")]
         public void AddPoolTableInPlan()
         {
             _context.PoolTables.Add(new PoolTable()
