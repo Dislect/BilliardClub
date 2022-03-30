@@ -9,7 +9,7 @@ namespace BilliardClub.Models.Initialization
         {
             string adminEmail = "admin";
             string password = "admin";
-            string adminName = "Админ";
+            string adminName = "Администратор";
             if (await roleManager.FindByNameAsync("employee") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("employee"));
