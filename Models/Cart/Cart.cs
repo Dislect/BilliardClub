@@ -34,11 +34,16 @@ namespace BilliardClub.Models
             var httpContext = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext;
             if (httpContext != null)
             {
-                ISession session = httpContext?.Session;
-                var context = services.GetService<Context>();
-                var backgroundJob = services.GetService<IBackgroundJobClient>();
+                // установка нового или полученного из сессии уникального идентификатора корзины
+                var session = httpContext.Session;
                 string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
                 session.SetString("CartId", cartId);
+
+                // получение сервисов, необходимых для создания экземпляра корзины
+                var context = services.GetService<Context>();
+                var backgroundJob = services.GetService<IBackgroundJobClient>();
+
+                // создание экземпляра корзины с уникальным идентификатором
                 cart = new Cart(context, backgroundJob) {cartId = cartId};
             }
 
