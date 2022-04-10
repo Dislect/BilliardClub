@@ -7,13 +7,14 @@
         <div class="center">
             <table class="table">
                 <thead>
-                <tr>
-                    <th> № Стола </th>
-                    <th> Дата и время начала бронирования </th>
-                    <th> Дата и время окончания бронирования </th>
-                    <th> Статус </th>
-                    <th>  </th>
-                </tr>
+                    <tr>
+                        <th> № Стола </th>
+                        <th> Дата и время начала бронирования </th>
+                        <th> Дата и время окончания бронирования </th>
+                        <th> Статус </th>
+                        <th>  </th>
+                        <th>  </th>-
+                    </tr>
                 </thead>
                 <tbody style="color: antiquewhite">
                 @foreach (var table in Model)
@@ -25,6 +26,9 @@
                         <td> @table.statusTables.Last().status.name </td>
                         <td>
                             <button class="remove__tr__table"> Завершить бронирование </button>
+                        </td>
+                        <td>
+                            <button class="remove__tr__table"> Продлить на час </button>
                         </td>
                     </tr>
                 }

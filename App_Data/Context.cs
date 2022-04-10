@@ -1,4 +1,5 @@
 ﻿using BilliardClub.Models;
+using BilliardClub.Models.AbstractFactory;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,5 +23,15 @@ namespace BilliardClub.App_Data
         public DbSet<TypeTable> TypeTables { get; set; }
         public DbSet<OrderFoodItem> OrderFoodItems {get; set; }
         public DbSet<OrderPoolTable> OrderPoolTables {get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<RusType>();
+            builder.Entity<EnType>();
+            builder.Entity<RusRotation>();
+            builder.Entity<EnRotation>();
+
+            base.OnModelCreating(builder);
+        }
     }
 }

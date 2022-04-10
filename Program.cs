@@ -26,7 +26,8 @@ namespace BilliardClub
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     var context = services.GetRequiredService<Context>();
-                    await InitialDataBase.InitialAsync(context);
+                    //await InitialDataBase.InitialAsync(context);
+                    await TestInitialDataBase.InitialAsync(context);
                     await RoleInitializer.InitializeAsync(userManager, rolesManager);
                 }
                 catch (Exception ex)

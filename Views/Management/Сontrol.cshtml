@@ -8,6 +8,7 @@
                 <h3>Пользователь: @User.Identity.Name</h3>
                 <ul>
                     <li><a id="href_to_reserved_tables" href="">Забронированные столы</a></li>
+                    <li><a id="href_to_food_items" href="">Меню ресторана</a></li>
                     <li><a id="href_to_types_tables" href="">Типы столов</a></li>
                     <li><a id="href_to_tables_rotation" href="">Вращение столов</a></li>
                     <li><a id="href_to_tables_status_history" href="">История использования столов</a></li>
@@ -37,6 +38,11 @@
     $('#href_to_reserved_tables').click(function (event) {
         event.preventDefault();
         $('.content__block2').load("@Url.Action("_ReservedTables")");
+    });
+
+    $('#href_to_food_items').click(function (event) {
+        event.preventDefault();
+        $('.content__block2').load("@Url.Action("_RestaurantMenu")");
     });
 
     $('#href_to_types_tables').click(function (event) {

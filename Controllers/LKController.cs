@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
@@ -22,7 +21,8 @@ namespace BilliardClub.Controllers
         private readonly Cart _cart;
         private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public LKController(Context context, UserManager<User> userManager, Cart cart, IBackgroundJobClient backgroundJobClient)
+        public LKController(Context context, UserManager<User> userManager, Cart cart,
+            IBackgroundJobClient backgroundJobClient)
         {
             _context = context;
             _userManager = userManager;
@@ -112,7 +112,7 @@ namespace BilliardClub.Controllers
                 {
                     foreach (var tableInCart in tablesInCart)
                     {
-                        if (tableInCart.reservationDate.AddMinutes(2) < DateTime.Now)
+                        if (tableInCart.reservationDate.AddMinutes(5) < DateTime.Now)
                         {
                             return BadRequest($"Нельзя забронировать стол №{tableInCart.PoolTable.name} на прошедшее время.");
                         }
@@ -159,8 +159,8 @@ namespace BilliardClub.Controllers
                                 status = statusReserve
                             });
 
-                            CreateJob(tableInCart);
                             _cart.DeleteTableInCart(tableInCart.PoolTable);
+                            CreateJob(tableInCart);
                         }
 
                         receipt += tableInCart.numberHours * tableInCart.PoolTable.typeTable.price;
@@ -229,20 +229,22 @@ namespace BilliardClub.Controllers
         private void CreateReservJob(CartPoolTable tableInCart)
         {
             // создание задачи на бронирование стола к определенной дате
-            _backgroundJobClient.Schedule<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id),
-                tableInCart.reservationDate);
+            var dateStart = tableInCart.reservationDate;
+            var dateEnd = dateStart.AddHours(tableInCart.numberHours);
 
-            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
-                tableInCart.reservationDate.AddHours(tableInCart.numberHours));
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id, dateEnd), dateStart);
+
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id), dateEnd);
         }
 
         private void CreateJob(CartPoolTable tableInCart)
         {
-            // моментальное бронирование
-            _backgroundJobClient.Enqueue<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id));
+            var dateEnd = tableInCart.reservationDate.AddHours(tableInCart.numberHours);
 
-            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id),
-                tableInCart.reservationDate.AddHours(tableInCart.numberHours));
+            // моментальное бронирование
+            _backgroundJobClient.Enqueue<OrderService>(x => x.ReservationForSelectedDateJob(tableInCart.PoolTable.id, dateEnd));
+
+            _backgroundJobClient.Schedule<OrderService>(x => x.ReleaseOnSelectedDateJob(tableInCart.PoolTable.id), dateEnd);
         }
 
         #endregion

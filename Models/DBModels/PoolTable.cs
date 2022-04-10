@@ -14,13 +14,8 @@ namespace BilliardClub.Models
         public List<OrderPoolTable> orders { get; set; } = new();
         public List<StatusTable> statusTables { get; set; } = new();
 
-        [NotMapped]
-        public int? idTypeTable { get; set; }
-        [NotMapped]
-        public int? idTableRotation { get; set; }
-        [NotMapped]
-        public int? idStatus { get; set; }
-        [NotMapped]
-        public int? idOrder { get; set; }
+        [NotMapped] public int? idTypeTable { get; set; }
+        [NotMapped] public int? idTableRotation { get; set; }
+        [NotMapped] public int? idStatus { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
-using BilliardClub.View_Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +71,15 @@ namespace BilliardClub.Controllers
 
         #endregion
 
+        #region RestaurantMenu
+
+        public async Task<ActionResult> _RestaurantMenu()
+        {
+            return PartialView(await _context.FoodItems.ToListAsync());
+        }
+
+        #endregion
+
         #region Types tables
 
         public async Task<ActionResult> _TypesTables()
@@ -79,15 +87,15 @@ namespace BilliardClub.Controllers
             return PartialView(await _context.TypeTables.ToListAsync());
         }
 
-        public void AddTypeTable()
-        {
-            _context.TypeTables.Add(new TypeTable()
-            {
-                name = "Новый тип",
-                price = 200
-            });
-            _context.SaveChanges();
-        }
+        //public void AddTypeTable()
+        //{
+        //    _context.TypeTables.Add(new TypeTable()
+        //    {
+        //        name = "Новый тип",
+        //        price = 200
+        //    });
+        //    _context.SaveChanges();
+        //}
 
         public TypeTable GetTypeTableInfo(int idTypeTable)
         {
@@ -125,15 +133,15 @@ namespace BilliardClub.Controllers
             return PartialView(await _context.TableRotations.ToListAsync());
         }
 
-        public void AddTableRotation()
-        {
-            _context.TableRotations.Add(new TableRotation()
-            {
-                rotationAngle = 0
-            });
+        //public void AddTableRotation()
+        //{
+        //    _context.TableRotations.Add(new TableRotation()
+        //    {
+        //        rotationAngle = 0
+        //    });
 
-            _context.SaveChanges();
-        }
+        //    _context.SaveChanges();
+        //}
 
         public TableRotation GetTableRotationInfo(int idTableRotation)
         {

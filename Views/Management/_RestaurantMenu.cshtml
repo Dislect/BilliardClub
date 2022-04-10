@@ -1,0 +1,118 @@
+﻿@model System.Collections.Generic.List<BilliardClub.Models.FoodItem>
+
+<div class="management__block">
+    <h1> Меню ресторана </h1>
+    <a href="#" id="add_new">Добавить продукцию</a>
+    <div class="center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Наименование</th>
+                    <th>Цена</th>
+                    <th>Изображение</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var foodItem in Model)
+            {
+                <tr>
+                    <td>@foodItem.id</td>
+                    <td>@foodItem.title</td>
+                    <td>@foodItem.price</td>
+                    <td><img src="@foodItem.picturePath" style="width: 40px;height: 40px"/> </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="dialog" title="Изменение" style="display: none">
+    <p>
+        id продукции: 1
+        <span id="idFoodItem"></span>
+    </p>
+    <p>
+        Наименование:
+        <input id="" type="text" value="Закуска" />
+    </p>
+    <p>
+        Цена:
+        <input id="" type="text" value="550"  style="width: 179px"/>
+    </p>
+    <p>
+        Изображение:
+        <input id="" type="text" value=""/>
+        <button>Выбрать новое</button>
+    </p>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+<script>
+    var pencil = $('<img src="/img/pencil.png" class="change"/>').css({
+        'width': '25px',
+        'height': '25px',
+        'position': 'absolute',
+        'background-repeat': 'no-repeat',
+        'background-size': 'contain',
+        'cursor': 'pointer'
+    });
+
+    $(pencil).appendTo($('tbody > tr'));
+
+        $('.change').unbind("click").click(function () {
+        var tr = $(this).parent();
+        var id = $(tr).find('td:first').text();
+        ChangeDialog(id);
+        $("#dialog").dialog({
+            resizable: 'false',
+            width: '400px',
+            minHeight: '800px',
+            buttons: [{
+                    text: "Удалить угол", click: function () {
+                        $.ajax({
+                            url: "@Url.Action("DeleteTableRotation")",
+                            type: "POST",
+                            data: {
+                                'idTableRotation': $('#idTableRotation').text()
+                            }
+                        }).done(function () {
+                            $('.content__block2').load("@Url.Action("_Rotation")");
+                            $('#dialog').dialog("close");
+                        });
+                    }
+                },
+                {
+                    text: "Сохранить", click: function () {
+                        $.ajax({
+                            url: '@Url.Action("ChangeTableRotation")',
+                            data: {
+                                'idTableRotation': $('#idTableRotation').text(),
+                                'newAngle': $('#newAngle').val()
+                            },
+                            type: 'POST'
+                        }).done(function () {
+                            $('.content__block2').load("@Url.Action("_Rotation")");
+                            $('#dialog').dialog("close");
+                        });
+                    }
+                }]
+        });
+    });
+
+    function ChangeDialog(id)
+    {
+        $.ajax({
+            url: '@Url.Action("GetTableRotationInfo")',
+            data: { idTableRotation: id},
+            type: 'GET'
+        }).done(function (tableRotation) {
+            $('#idTableRotation').text(tableRotation.id);
+            $('#newAngle').val(tableRotation.rotationAngle);
+        });
+    }
+</script>

@@ -2,7 +2,7 @@
 
 namespace BilliardClub.Models
 {
-    public class TypeTable
+    public abstract class TypeTable
     {
         public int id { get; set; }
         public string name { get; set; }

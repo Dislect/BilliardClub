@@ -183,7 +183,7 @@ input[type=number]::-webkit-outer-spin-button {
     user-select: none;
     background: #292929;
     border-radius: 20px;
-    padding: .7em 1.5em;
+    padding: 9px;
 }
 
     .remove__tr__table:hover, .remove__tr__product:hover {

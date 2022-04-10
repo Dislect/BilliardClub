@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.HangfireService;
@@ -52,13 +51,11 @@ namespace BilliardClub.Models
 
         public async Task AddToCartTable(PoolTable table, DateTime dateReservation)
         {
-            var statusInCart = _context.Status.FirstOrDefault(x => x.name == "В корзине");
-
             if (table.statusTables.Any())
             {
                 table.statusTables.Last().dateEnd = DateTime.Now;
             }
-            table.statusTables.Add(new StatusTable() { dateStart = dateReservation, status = statusInCart });
+            table.statusTables.Add(new StatusTable() { dateStart = dateReservation, status = GetStatusInCart() });
 
             _context.CartPoolTables.Add(new CartPoolTable()
             {
@@ -71,9 +68,14 @@ namespace BilliardClub.Models
             // создание работы на удалени стола из корзины
             _backgroundJobClient.Schedule<CartService>(x => x.DeleteTableInCartJob(table.id, cartId),
                 // время до начала работы
-                new TimeSpan(0, 1, 0));
+                TimeSpan.FromMinutes(5));
 
             await _context.SaveChangesAsync();
+        }
+
+        private Status GetStatusInCart()
+        {
+            return _context.Status.FirstOrDefault(x => x.name == "В корзине");
         }
 
         public async Task AddToCartProduct(FoodItem product)

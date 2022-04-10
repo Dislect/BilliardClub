@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BilliardClub.HangfireService
 {

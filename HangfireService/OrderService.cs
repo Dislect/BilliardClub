@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BilliardClub.App_Data;
 using BilliardClub.Models;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 namespace BilliardClub.HangfireService
@@ -18,7 +16,7 @@ namespace BilliardClub.HangfireService
             _context = context;
         }
 
-        public async Task ReservationForSelectedDateJob(int tableId)
+        public async Task ReservationForSelectedDateJob(int tableId, DateTime dateEnd)
         {
             var table = _context.PoolTables
                             .Include(x => x.statusTables)
@@ -37,7 +35,8 @@ namespace BilliardClub.HangfireService
             table.statusTables.Add(new StatusTable()
             {
                 dateStart = DateTime.Now,
-                status = statusReserve
+                status = statusReserve,
+                dateEnd = dateEnd
             });
 
             await _context.SaveChangesAsync();
