@@ -1,13 +1,4 @@
 ﻿@model BilliardClub.View_Models.ReservationViewModel
-@{
-    string divStyle;
-    string pStyle;
-    Dictionary<string, string> cssStyle = new Dictionary<string, string>()
-    {
-        ["Русский бильярд"] = "rusb",
-        ["Американский пул"] = "poolb"
-    };
-}
 
 <style>
     body {
@@ -17,54 +8,7 @@
 
 <div class="content__reservation">
     <div class="plan">
-        @foreach (var poolTable in Model.poolTables)
-        {
-            divStyle = "left: " + poolTable.tableX + "px;" +
-                       "top: " + poolTable.tableY + "px;" +
-                       "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);" +
-                       "position: absolute;";
-
-            pStyle = "transform: rotate(-" + poolTable.tableRotation.rotationAngle + "deg);";
-
-            if (Model.cart.CartPoolTables.Exists(x => x.PoolTable != null
-                                                 && x.PoolTable.id == poolTable.id
-                                                 && Model.cart.cartId == x.cartId))
-            {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger inMyCart">
-                    <p class="numberTable" style="@pStyle">
-                        @poolTable.name
-                    </p>
-                    <input class="id" type="hidden" value="@poolTable.id">
-                </div>
-            }
-            else if (poolTable.statusTables.Count != 0 && poolTable.statusTables.Last().status.name == "В корзине")
-            {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger inOtherCart">
-                    <p class="numberTable" style="@pStyle">
-                        @poolTable.name
-                    </p>
-                    <input class="id" type="hidden" value="@poolTable.id">
-                </div>
-            }
-            else if (poolTable.statusTables.Count != 0 && poolTable.statusTables.Last().status.name == "Забронирован")
-            {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger reserved">
-                    <p class="numberTable" style="@pStyle">
-                        @poolTable.name
-                    </p>
-                    <input class="id" type="hidden" value="@poolTable.id">
-                </div>
-            }
-            else
-            {
-                <div style="@divStyle" class="@cssStyle[poolTable.typeTable.name] trigger">
-                    <p class="numberTable" style="@pStyle">
-                        @poolTable.name
-                    </p>
-                    <input class="id" type="hidden" value="@poolTable.id">
-                </div>
-            }
-        }
+        <pool-table pool-tables="@Model.poolTables"></pool-table>
     </div>
 </div>
 

@@ -9,7 +9,7 @@ namespace BilliardClub.Models.Initialization
     {
         public static async Task InitialAsync(Context _context)
         {
-            AbstractFactory.AbstractFactory factory = new EnFactory();
+            AbstractFactory.AbstractFactory factory = new RusFactory();
 
             if (!_context.PoolTables.Any())
             {
