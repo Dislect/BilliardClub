@@ -1,4 +1,5 @@
-﻿using BilliardClub.Models;
+﻿using BilliardClub.Data.TagHelpers;
+using BilliardClub.Models;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Collections.Generic;
@@ -32,41 +33,53 @@ namespace BilliardClub.Data.HtmlTags
             StringBuilder listContent = new();
             StringBuilder block = new();
 
+            var factory = new TagFactory();
+            var divContext = new TagContext();
+            var pContext = new TagContext();
+            var div = factory.GetHtmlTag("div");
+            var p = factory.GetHtmlTag("p");
+            var input = factory.GetHtmlTag("input");
+
             foreach (var poolTable in poolTables)
             {
-                divStyle.Clear();
-                pStyle.Clear();
-                block.Clear();
+                divContext.Clear();
+                pContext.Clear();
 
-                divStyle.Append( "left: " + poolTable.tableX + "px;" 
-                    + "top: " + poolTable.tableY + "px;" 
-                    + "transform: rotate(" + poolTable.tableRotation.rotationAngle + "deg);"
-                    + "position: absolute;");
+                divContext.AddStyle("left", poolTable.tableX + "px");
+                divContext.AddStyle("top", poolTable.tableY + "px");
+                divContext.AddStyle("transform", $"rotate({poolTable.tableRotation.rotationAngle}deg)");
+                divContext.AddStyle("position", "absolute");
+                divContext.AddClass(cssStyle[poolTable.typeTable.name]);
+                divContext.AddClass("trigger");
 
-                pStyle.Append( "transform:\"rotate(-" + poolTable.tableRotation.rotationAngle + "deg);\"");
+                pContext.AddStyle("transform", $"rotate(-{poolTable.tableRotation.rotationAngle}deg)");
+                pContext.AddClass("numberTable");
+                pContext.SetContent(poolTable.name);
+
+                divContext.SetContent(p.Output(pContext) +
+                    $"<input class=\"id\" type=\"hidden\" value=\"{poolTable.id}\">");
 
                 if (_cart.CartPoolTables.Exists(x => x.PoolTable.id == poolTable.id))
                 {
-                    block.Append($"<div style =\"{divStyle}\" class =\"{cssStyle[poolTable.typeTable.name]} trigger inMyCart\">");
+                    divContext.AddClass("inMyCart");
+                    block.Append(div.Output(divContext));
                 }
                 else if (poolTable.statusTables.Any()
                     && poolTable.statusTables.Last().status.name == "В корзине")
                 {
-                    block.Append($"<div style =\"{divStyle}\" class =\"{cssStyle[poolTable.typeTable.name]} trigger inOtherCart\">");
+                    divContext.AddClass("inOtherCart");
+                    block.Append(div.Output(divContext));
                 }
                 else if (poolTable.statusTables.Any() 
                     && poolTable.statusTables.Last().status.name == "Забронирован")
                 {
-                    block.Append($"<div style =\"{divStyle}\" class =\"{cssStyle[poolTable.typeTable.name]} trigger reserved\">");
+                    divContext.AddClass("reserved");
+                    block.Append(div.Output(divContext));
                 }
                 else 
                 {
-                    block.Append($"<div style =\"{divStyle}\" class =\"{cssStyle[poolTable.typeTable.name]} trigger\">");
+                    block.Append(div.Output(divContext));
                 }
-
-                block.Append($"<p class=\"numberTable\" style={pStyle}> {poolTable.name} </p>");
-                block.Append($"<input class=\"id\" type=\"hidden\" value=\"{poolTable.id}\">");
-                block.Append("</div>");
 
                 listContent.Append(block);
             }
