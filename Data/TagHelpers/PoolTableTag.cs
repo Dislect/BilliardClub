@@ -1,18 +1,20 @@
 ﻿using BilliardClub.Data.TagHelpers;
 using BilliardClub.Models;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using BilliardClub.Data.TagHelpers.Interfaces;
 
 namespace BilliardClub.Data.HtmlTags
 {
     public class PoolTableTagHelper : TagHelper
     {
         private Cart _cart;
-        Dictionary<string, string> cssStyle = new Dictionary<string, string>()
+        private ITagFactory factory;
+        private StringBuilder listContent = new();
+        private StringBuilder block = new();
+        Dictionary<string, string> cssStyle = new()
         {
             ["Русский бильярд"] = "rusb",
             ["Американский пул"] = "poolb"
@@ -28,22 +30,21 @@ namespace BilliardClub.Data.HtmlTags
         {
             output.TagName = "div";
 
-            StringBuilder divStyle = new();
-            StringBuilder pStyle = new();
-            StringBuilder listContent = new();
-            StringBuilder block = new();
-
-            var factory = new TagFactory();
-            var divContext = new TagContext();
-            var pContext = new TagContext();
+            factory = new TagPairedFactory();
             var div = factory.GetHtmlTag("div");
             var p = factory.GetHtmlTag("p");
+            var divContext = new TagContext();
+            var pContext = new TagContext();
+
+            factory = new TagSingleFactory();
             var input = factory.GetHtmlTag("input");
+            var inputContext = new TagContext();
 
             foreach (var poolTable in poolTables)
             {
-                divContext.Clear();
-                pContext.Clear();
+                divContext.ClearAll();
+                pContext.ClearAll();
+                inputContext.ClearAll();
 
                 divContext.AddStyle("left", poolTable.tableX + "px");
                 divContext.AddStyle("top", poolTable.tableY + "px");
@@ -56,8 +57,10 @@ namespace BilliardClub.Data.HtmlTags
                 pContext.AddClass("numberTable");
                 pContext.SetContent(poolTable.name);
 
-                divContext.SetContent(p.Output(pContext) +
-                    $"<input class=\"id\" type=\"hidden\" value=\"{poolTable.id}\">");
+                inputContext.AddClass("id");
+                inputContext.SetContent($"type=\"hidden\" value=\"{poolTable.id}\"");
+
+                divContext.SetContent(p.Output(pContext) + input.Output(inputContext));
 
                 if (_cart.CartPoolTables.Exists(x => x.PoolTable.id == poolTable.id))
                 {

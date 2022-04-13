@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BilliardClub.Data.TagHelpers
+﻿namespace BilliardClub.Data.TagHelpers
 {
-    public class HtmlTag
+    public class HtmlTagPaired : IHtmlTag
     {
-        private string _name;
+        private readonly string _name;
 
-        public HtmlTag(string name)
+        public HtmlTagPaired(string name)
         {
             _name = name;
         }

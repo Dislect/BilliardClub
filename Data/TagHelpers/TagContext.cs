@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.String;
 
 namespace BilliardClub.Data.TagHelpers
 {
-    public class TagContext : ITagContext
+    public class TagContext
     {
-        private List<string> _styles = new();
-        private List<string> _classes = new();
+        private readonly List<string> _styles = new();
+        private readonly List<string> _classes = new();
         private string _content = "";
 
         public void AddStyle(string style, string value)
@@ -23,7 +23,7 @@ namespace BilliardClub.Data.TagHelpers
 
         public string GetStyle()
         {
-            return String.Join("", _styles);
+            return Join("", _styles);
         }
 
         public void AddClass(string className)
@@ -38,7 +38,7 @@ namespace BilliardClub.Data.TagHelpers
          
         public string GetClasses()
         {
-            return String.Join(" ", _classes);
+            return Join(" ", _classes);
         }
 
         public string GetContent()
@@ -51,11 +51,11 @@ namespace BilliardClub.Data.TagHelpers
             _content = content;
         }
 
-        public void Clear()
+        public void ClearAll()
         {
-            _classes.Clear();
+            ClearStyle();
+            ClearClasses();
             _content = "";
-            _styles.Clear();
         }
     }
 }
