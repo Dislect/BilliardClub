@@ -237,29 +237,17 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.rusb {
     height: 70px;
     width: 120px;
-    background-image: url(/img/rusb.png);
     background-repeat: no-repeat;
     background-size: contain;
     cursor: pointer;
+    position: absolute;
 }
 
     .rusb:hover, .poolb:hover {
         filter: brightness(120%);
     }
-
-.poolb {
-    height: 70px;
-    width: 120px;
-    background-image: url(/img/poolb.png);
-    background-repeat: no-repeat;
-    background-size: contain;
-    cursor: pointer;
-}
 
     .rusb p, .poolb p {
         user-select: none;

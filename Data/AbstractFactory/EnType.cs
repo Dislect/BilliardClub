@@ -6,6 +6,7 @@
         {
             this.name = "Американский пул";
             this.price = 300;
+            this.picturePath = "/img/poolb.png";
         }
     }
 }

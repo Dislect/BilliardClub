@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using BilliardClub.App_Data;
+using BilliardClub.Data.DBModels.Repository;
 using BilliardClub.HangfireService;
 using BilliardClub.Models;
 using Hangfire;
@@ -64,7 +65,8 @@ namespace BilliardClub
             services.AddScoped(sp => Cart.GetCart(sp));
             services.AddTransient<CartService>();
             services.AddTransient<OrderService>();
-
+            services.AddTransient<StatusRepository>();
+            
             services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson(options =>
                 options.SerializerSettings.PreserveReferencesHandling  = Newtonsoft.Json.PreserveReferencesHandling.Objects
             );

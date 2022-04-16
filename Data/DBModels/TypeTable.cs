@@ -7,6 +7,7 @@ namespace BilliardClub.Models
         public int id { get; set; }
         public string name { get; set; }
         public uint price { get; set; }
+        public string picturePath { get; set; }
         public List<PoolTable> poolTables { get; set; }
     }
 }

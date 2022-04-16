@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BilliardClub.Data.DBModels.Repository;
 using BilliardClub.Data.TagHelpers.Interfaces;
 
 namespace BilliardClub.Data.HtmlTags
@@ -11,9 +12,9 @@ namespace BilliardClub.Data.HtmlTags
     public class PoolTableTagHelper : TagHelper
     {
         private Cart _cart;
+        private StatusRepository _statusRepository;
         private ITagFactory factory;
         private StringBuilder listContent = new();
-        private StringBuilder block = new();
         Dictionary<string, string> cssStyle = new()
         {
             ["Русский бильярд"] = "rusb",
@@ -21,9 +22,10 @@ namespace BilliardClub.Data.HtmlTags
         };
         public List<PoolTable> poolTables { get; set; }
 
-        public PoolTableTagHelper(Cart cart)
+        public PoolTableTagHelper(Cart cart, StatusRepository statusRepository)
         {
             _cart = cart;
+            _statusRepository = statusRepository;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -49,7 +51,7 @@ namespace BilliardClub.Data.HtmlTags
                 divContext.AddStyle("left", poolTable.tableX + "px");
                 divContext.AddStyle("top", poolTable.tableY + "px");
                 divContext.AddStyle("transform", $"rotate({poolTable.tableRotation.rotationAngle}deg)");
-                divContext.AddStyle("position", "absolute");
+                divContext.AddStyle("background-image", $"url({poolTable.typeTable.picturePath})");
                 divContext.AddClass(cssStyle[poolTable.typeTable.name]);
                 divContext.AddClass("trigger");
 
@@ -65,26 +67,24 @@ namespace BilliardClub.Data.HtmlTags
                 if (_cart.CartPoolTables.Exists(x => x.PoolTable.id == poolTable.id))
                 {
                     divContext.AddClass("inMyCart");
-                    block.Append(div.Output(divContext));
+                    listContent.Append(div.Output(divContext));
                 }
                 else if (poolTable.statusTables.Any()
-                    && poolTable.statusTables.Last().status.name == "В корзине")
+                    && poolTable.statusTables.Last().status.id == _statusRepository.GetStatusInCart().id)
                 {
                     divContext.AddClass("inOtherCart");
-                    block.Append(div.Output(divContext));
+                    listContent.Append(div.Output(divContext));
                 }
                 else if (poolTable.statusTables.Any() 
-                    && poolTable.statusTables.Last().status.name == "Забронирован")
+                    && poolTable.statusTables.Last().status.id == _statusRepository.GetStatusReserved().id)
                 {
                     divContext.AddClass("reserved");
-                    block.Append(div.Output(divContext));
+                    listContent.Append(div.Output(divContext));
                 }
                 else 
                 {
-                    block.Append(div.Output(divContext));
+                    listContent.Append(div.Output(divContext));
                 }
-
-                listContent.Append(block);
             }
 
             output.Content.SetHtmlContent(listContent.ToString());

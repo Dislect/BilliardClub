@@ -6,6 +6,7 @@
         {
             this.name = "Русский бильярд";
             this.price = 200;
+            this.picturePath = "/img/rusb.png";
         }
     }
 }
